@@ -9,6 +9,7 @@ import {ErrorDialog} from './Editor'
 import './Editor'
 import { App } from './App'
 import {DiagramPage} from './Pages'
+import { NewDialog } from './Dialogs'
 
 (function()
 {
@@ -1435,6 +1436,7 @@ import {DiagramPage} from './Pages'
 	 */
 	EditorUi.prototype.setFileData = function(data)
 	{
+    debugger
 		data = this.validateFileData(data);
 		this.currentPage = null;
 		this.fileNode = null;
@@ -2181,6 +2183,7 @@ import {DiagramPage} from './Pages'
 	 */
 	EditorUi.prototype.fileLoaded = function(file, noDialogs)
 	{
+    debugger
 		var oldFile = this.getCurrentFile();
 		this.fileLoadedError = null;
 		this.setCurrentFile(null);

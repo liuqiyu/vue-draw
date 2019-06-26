@@ -448,6 +448,7 @@ Editor.prototype.readGraphState = function (node) {
  * Sets the XML node for the current diagram.
  */
 Editor.prototype.setGraphXml = function (node) {
+  debugger
   if (node != null) {
     var dec = new mxCodec(node.ownerDocument);
 

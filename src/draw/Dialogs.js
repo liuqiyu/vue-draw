@@ -128,7 +128,7 @@ export var StorageDialog = function (editorUi, fn, rowLimit) {
 
     if (img != null) {
       var logo = document.createElement('img');
-      logo.setAttribute('src', img);
+      logo.setAttribute('src', require('@/draw/images' + img));
       logo.setAttribute('border', '0');
       logo.setAttribute('align', 'absmiddle');
       logo.style.width = '60px';
@@ -258,17 +258,17 @@ export var StorageDialog = function (editorUi, fn, rowLimit) {
   div.appendChild(hd);
 
   if (typeof window.DriveClient === 'function') {
-    addLogo(IMAGE_PATH + '/google-drive-logo.svg', mxResources.get('googleDrive'), App.MODE_GOOGLE, 'drive');
+    addLogo('/google-drive-logo.svg', mxResources.get('googleDrive'), App.MODE_GOOGLE, 'drive');
   }
 
   if (typeof window.OneDriveClient === 'function') {
-    addLogo(IMAGE_PATH + '/onedrive-logo.svg', mxResources.get('oneDrive'), App.MODE_ONEDRIVE, 'oneDrive');
+    addLogo('/onedrive-logo.svg', mxResources.get('oneDrive'), App.MODE_ONEDRIVE, 'oneDrive');
   }
 
-  addLogo(IMAGE_PATH + '/osa_drive-harddisk.png', mxResources.get('device'), App.MODE_DEVICE);
+  addLogo('/osa_drive-harddisk.png', mxResources.get('device'), App.MODE_DEVICE);
 
   if (isLocalStorage && (urlParams['browser'] == '1' || urlParams['offline'] == '1')) {
-    addLogo(IMAGE_PATH + '/osa_database.png', mxResources.get('browser'), App.MODE_BROWSER);
+    addLogo('/osa_database.png', mxResources.get('browser'), App.MODE_BROWSER);
   }
 
   div.appendChild(buttons);
@@ -450,34 +450,9 @@ export var SplashDialog = function (editorUi) {
 
   var service = '';
 
-  if (editorUi.mode == App.MODE_GOOGLE) {
-    logo.src = IMAGE_PATH + '/google-drive-logo.svg';
-    service = mxResources.get('googleDrive');
-  }
-  else if (editorUi.mode == App.MODE_DROPBOX) {
-    logo.src = IMAGE_PATH + '/dropbox-logo.svg';
-    service = mxResources.get('dropbox');
-  }
-  else if (editorUi.mode == App.MODE_ONEDRIVE) {
-    logo.src = IMAGE_PATH + '/onedrive-logo.svg';
-    service = mxResources.get('oneDrive');
-  }
-  else if (editorUi.mode == App.MODE_GITHUB) {
-    logo.src = IMAGE_PATH + '/github-logo.svg';
-    service = mxResources.get('github');
-  }
-  else if (editorUi.mode == App.MODE_TRELLO) {
-    logo.src = IMAGE_PATH + '/trello-logo.svg';
-    service = mxResources.get('trello');
-  }
-  else if (editorUi.mode == App.MODE_BROWSER) {
-    logo.src = IMAGE_PATH + '/osa_database.png';
-    service = mxResources.get('browser');
-  }
-  else {
-    logo.src = IMAGE_PATH + '/osa_drive-harddisk.png';
-    service = mxResources.get('device');
-  }
+  logo.src = require('@/draw/images/osa_drive-harddisk.png');
+  service = mxResources.get('device');
+
 
   var buttons = document.createElement('div');
   buttons.style.margin = '4px 0px 0px 0px';
@@ -1413,7 +1388,7 @@ export var CreateGraphDialog = function (editorUi, title, type) {
  * 
  */
 CreateGraphDialog.prototype.connectImage = new mxImage((mxClient.IS_SVG) ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjQ3OTk0QjMyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjQ3OTk0QjQyRDcyMTFFNThGQThGNDVBMjNBMjFDMzkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoyRjA0N0I2MjJENzExMUU1OEZBOEY0NUEyM0EyMUMzOSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNDc5OTRCMjJENzIxMUU1OEZBOEY0NUEyM0EyMUMzOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PjIf+MgAAATlSURBVHjanFZraFxFFD735u4ru3ls0yZG26ShgmJoKK1J2vhIYzBgRdtIURHyw1hQUH9IxIgI2h8iCEUF/1RRlNQYCsYfCTHVhiTtNolpZCEStqSC22xIsrs1bDfu7t37Gs/cO3Ozxs1DBw73zpk555vzmHNGgJ0NYatFgmNLYUHYUoHASMz5ijmgVLmxgfKCUiBxC4ACJAeSG8nb1dVVOTc3dyoSibwWDofPBIPBJzo7O8vpGtvjpDICGztxkciECpF2LS0tvZtOpwNkk5FKpcYXFxffwL1+JuPgllPj8nk1F6RoaGjoKCqZ5ApljZDZO4SMRA0SuG2QUJIQRV8HxMOM9vf3H0ZZH9Nhg20MMl2QkFwjIyNHWlpahtADnuUMwLcRHX5aNSBjCJYEsSSLUeLEbhGe3ytCmQtA1/XY+Pj46dbW1iDuyCJp9BC5ycBj4hoeHq5ra2sbw0Xn1ZgBZ+dVkA1Lc+6p0Ck2p0QS4Ox9EhwpEylYcmBg4LH29vYQLilIOt0u5FhDfevNZDI/u93uw6PLOrwTUtjxrbPYbhD42WgMrF8JmR894ICmCgnQjVe8Xu8pXEkzMJKbuo5oNPomBbm1ZsD7s2kwFA1JZ6QBUXWT1nmGNc/qoMgavDcrQzxjQGFh4aOYIJ0sFAXcEtui4uLiVjr5KpSBVFYDDZVrWUaKRRWSAYeK0fmKykgDXbVoNaPChRuyqdDv97czL5nXxQbq6empQmsaklkDBiNpSwFVrmr2P6UyicD5piI4f8wHh0oEm8/p4h8pyGiEWvVQd3e3nxtjAzU1NR2jP7NRBWQ8GbdEzzJAmc0V3RR4cI8Dvmwuhc8fKUFA0d6/ltHg5p+Kuaejo6OeY0jcNJ/PV00ZS0nFUoZRvvFS1bZFsKHCCQ2Pl8H0chY+C96B6ZUsrCQ1qKtwQVFRURW/QhIXMAzDPAZ6BgOr8tTa8dDxCmiYGApaJbJMxSzV+brE8pdgWkcpY5dbMF1AR9XH8/xu2ilef48bvn92n82ZwHh+8ssqTEXS9p7dHisiiURikd8PbpExNTU1UVNTA3V3Y7lC16n0gpB/NwpNcZjfa7dScC4Qh0kOQCwnlEgi3F/hMVl9fX0zvKrzSk2lfXjRhj0eT/2rvWG4+Pta3oJY7XfC3hInXAv/ldeFLx8shQ+eqQL0UAAz7ylkpej5eNZRVBWL6BU6ef14OYiY1oqyTtmsavr/5koaRucT1pzx+ZpL1+GV5nLutksUgIcmtwTRiuuVZXnU5XId7A2swJkfFsymRWC91hHg1Viw6x23+7vn9sPJ+j20BE1hCXqSWaNSQ8ScbknRZWxub1PGCw/fBV+c3AeijlUbY5bBjEqr9GuYZP4jP41WudGSC6erTRCqdGZm5i1WvXWeDHnbBCZGc2Nj4wBl/hZOwrmBBfgmlID1HmGJutHaF+tKoevp/XCgstDkjo2NtWKLuc6AVN4mNjY+s1XQxoenOoFuDPHGtnRbJj9ej5GvL0dI7+giuRyMk1giazc+DP6vgUDgOJVlOv7R+PJ12QIeL6SyeDz+Kfp8ZrNWjgDTsVjsQ7qXyTjztXJhm9ePxFLfMTg4eG9tbe1RTP9KFFYQfHliYmIS69kCC7jKYmKwxxD5P88tkVkqbPPcIps9t4T/+HjcuJ/s5BFJgf4WYABCtxGuxIZ90gAAAABJRU5ErkJggg==' :
-  IMAGE_PATH + '/handle-connect.png', 26, 26);
+  '/handle-connect.png', 26, 26);
 
 /**
  * Constructs a new parse dialog.
@@ -2259,27 +2234,8 @@ export var NewDialog = function (editorUi, compact, showName, callback, createOn
   logo.style.marginRight = '10px';
   logo.style.paddingBottom = '4px';
 
-  if (editorUi.mode == App.MODE_GOOGLE) {
-    logo.src = IMAGE_PATH + '/google-drive-logo.svg';
-  }
-  else if (editorUi.mode == App.MODE_DROPBOX) {
-    logo.src = IMAGE_PATH + '/dropbox-logo.svg';
-  }
-  else if (editorUi.mode == App.MODE_ONEDRIVE) {
-    logo.src = IMAGE_PATH + '/onedrive-logo.svg';
-  }
-  else if (editorUi.mode == App.MODE_GITHUB) {
-    logo.src = IMAGE_PATH + '/github-logo.svg';
-  }
-  else if (editorUi.mode == App.MODE_TRELLO) {
-    logo.src = IMAGE_PATH + '/trello-logo.svg';
-  }
-  else if (editorUi.mode == App.MODE_BROWSER) {
-    logo.src = IMAGE_PATH + '/osa_database.png';
-  }
-  else {
-    logo.src = IMAGE_PATH + '/osa_drive-harddisk.png';
-  }
+  logo.src = require('@/draw/images/osa_drive-harddisk.png');
+
 
   if (!compact && showName) {
     header.appendChild(logo);
@@ -3072,7 +3028,7 @@ export var CreateDialog = function (editorUi, title, createFn, cancelFn, dlgTitl
     button.style.overflow = 'hidden';
 
     var logo = document.createElement('img');
-    logo.src = img;
+    logo.src = require('@/draw/images' + img);
     logo.setAttribute('border', '0');
     logo.setAttribute('align', 'absmiddle');
     logo.style.width = '60px';
@@ -3171,62 +3127,6 @@ export var CreateDialog = function (editorUi, title, createFn, cancelFn, dlgTitl
   // Adds all papersize options
   var serviceSelect = document.createElement('select');
   serviceSelect.style.marginLeft = '10px';
-
-  if (!editorUi.isOfflineApp() && !editorUi.isOffline()) {
-    if (typeof window.DriveClient === 'function') {
-      var googleOption = document.createElement('option');
-      googleOption.setAttribute('value', App.MODE_GOOGLE);
-      mxUtils.write(googleOption, mxResources.get('googleDrive'));
-      serviceSelect.appendChild(googleOption);
-
-      addLogo(IMAGE_PATH + '/google-drive-logo.svg', mxResources.get('googleDrive'), App.MODE_GOOGLE, 'drive');
-    }
-
-    if (typeof window.OneDriveClient === 'function') {
-      var oneDriveOption = document.createElement('option');
-      oneDriveOption.setAttribute('value', App.MODE_ONEDRIVE);
-      mxUtils.write(oneDriveOption, mxResources.get('oneDrive'));
-      serviceSelect.appendChild(oneDriveOption);
-
-      if (editorUi.mode == App.MODE_ONEDRIVE) {
-        oneDriveOption.setAttribute('selected', 'selected');
-      }
-
-      addLogo(IMAGE_PATH + '/onedrive-logo.svg', mxResources.get('oneDrive'), App.MODE_ONEDRIVE, 'oneDrive');
-    }
-
-    if (typeof window.DropboxClient === 'function') {
-      var dropboxOption = document.createElement('option');
-      dropboxOption.setAttribute('value', App.MODE_DROPBOX);
-      mxUtils.write(dropboxOption, mxResources.get('dropbox'));
-      serviceSelect.appendChild(dropboxOption);
-
-      if (editorUi.mode == App.MODE_DROPBOX) {
-        dropboxOption.setAttribute('selected', 'selected');
-      }
-
-      addLogo(IMAGE_PATH + '/dropbox-logo.svg', mxResources.get('dropbox'), App.MODE_DROPBOX, 'dropbox');
-    }
-
-    if (editorUi.gitHub != null) {
-      var gitHubOption = document.createElement('option');
-      gitHubOption.setAttribute('value', App.MODE_GITHUB);
-      mxUtils.write(gitHubOption, mxResources.get('github'));
-      serviceSelect.appendChild(gitHubOption);
-
-      addLogo(IMAGE_PATH + '/github-logo.svg', mxResources.get('github'), App.MODE_GITHUB, 'gitHub');
-    }
-
-    if (typeof window.TrelloClient === 'function') {
-      var trelloOption = document.createElement('option');
-      trelloOption.setAttribute('value', App.MODE_TRELLO);
-      mxUtils.write(trelloOption, mxResources.get('trello'));
-      serviceSelect.appendChild(trelloOption);
-
-      addLogo(IMAGE_PATH + '/trello-logo.svg', mxResources.get('trello'), App.MODE_TRELLO, 'trello');
-    }
-  }
-
   if (!Editor.useLocalStorage || urlParams['storage'] == 'device' ||
     (editorUi.getCurrentFile() != null/* && !mxClient.IS_IOS*/)) {
     var deviceOption = document.createElement('option');
@@ -3239,7 +3139,7 @@ export var CreateDialog = function (editorUi, title, createFn, cancelFn, dlgTitl
     }
 
     if (showDeviceButton) {
-      addLogo(IMAGE_PATH + '/osa_drive-harddisk.png', mxResources.get('device'), App.MODE_DEVICE);
+      addLogo('/osa_drive-harddisk.png', mxResources.get('device'), App.MODE_DEVICE);
     }
   }
 
@@ -3253,7 +3153,7 @@ export var CreateDialog = function (editorUi, title, createFn, cancelFn, dlgTitl
       browserOption.setAttribute('selected', 'selected');
     }
 
-    addLogo(IMAGE_PATH + '/osa_database.png', mxResources.get('browser'), App.MODE_BROWSER);
+    addLogo('/osa_database.png', mxResources.get('browser'), App.MODE_BROWSER);
   }
 
   function change (newMode) {
@@ -3784,7 +3684,7 @@ export var ImageDialog = function (editorUi, title, initialValue, fn, ignoreExis
   // Shows drop icon in dialog background
   if (Graph.fileSupport) {
     btns.style.marginTop = '120px';
-    div.style.backgroundImage = 'url(\'' + IMAGE_PATH + '/droptarget.png\')';
+    div.style.backgroundImage = 'url(\'' + '/droptarget.png\')';
     div.style.backgroundPosition = 'center 65%';
     div.style.backgroundRepeat = 'no-repeat';
 
@@ -4077,7 +3977,7 @@ export var LinkDialog = function (editorUi, initialValue, btnLabel, fn, showPage
   };
 
   if (typeof (google) != 'undefined' && typeof (google.picker) != 'undefined' && editorUi.drive != null) {
-    addButton(IMAGE_PATH + '/google-drive-logo.svg', mxResources.get('googlePlus'), function () {
+    addButton('/google-drive-logo.svg', mxResources.get('googlePlus'), function () {
       if (editorUi.spinner.spin(document.body, mxResources.get('authorizing'))) {
         editorUi.drive.checkToken(mxUtils.bind(this, function () {
           editorUi.spinner.stop();
@@ -4127,7 +4027,7 @@ export var LinkDialog = function (editorUi, initialValue, btnLabel, fn, showPage
   }
 
   if (typeof (Dropbox) != 'undefined' && typeof (Dropbox.choose) != 'undefined') {
-    addButton(IMAGE_PATH + '/dropbox-logo.svg', mxResources.get('dropbox'), function () {
+    addButton('/dropbox-logo.svg', mxResources.get('dropbox'), function () {
       // Authentication will be carried out on open to make sure the
       // autosave does not show an auth dialog. Showing it here will
       // block the second dialog (the file picker) so it's too early.
@@ -4146,7 +4046,7 @@ export var LinkDialog = function (editorUi, initialValue, btnLabel, fn, showPage
   }
 
   if (editorUi.oneDrive != null) {
-    addButton(IMAGE_PATH + '/onedrive-logo.svg', mxResources.get('oneDrive'), function () {
+    addButton('/onedrive-logo.svg', mxResources.get('oneDrive'), function () {
       editorUi.oneDrive.pickFile(function (id, files) {
         linkInput.value = files.value[0].webUrl;
         linkInput.focus();
@@ -4155,7 +4055,7 @@ export var LinkDialog = function (editorUi, initialValue, btnLabel, fn, showPage
   }
 
   if (editorUi.gitHub != null) {
-    addButton(IMAGE_PATH + '/github-logo.svg', mxResources.get('github'), function () {
+    addButton('/github-logo.svg', mxResources.get('github'), function () {
       editorUi.gitHub.pickFile(function (path) {
         if (path != null) {
           var tokens = path.split('/');
@@ -4208,14 +4108,14 @@ export var AboutDialog = function (editorUi) {
     img.setAttribute('height', '221');
     img.style.width = '164px';
     img.style.height = '221px';
-    img.setAttribute('src', IMAGE_PATH + '/drawlogo-text-bottom.svg');
+    img.setAttribute('src', '/drawlogo-text-bottom.svg');
   }
   else {
     img.setAttribute('width', '176');
     img.setAttribute('height', '219');
     img.style.width = '170px';
     img.style.height = '219px';
-    img.setAttribute('src', IMAGE_PATH + '/logo-flat.png');
+    img.setAttribute('src', '/logo-flat.png');
   }
 
   if (uiTheme == 'dark') {
@@ -5659,23 +5559,23 @@ export var AuthDialog = function (editorUi, peer, showRememberOption, fn) {
 
   if (peer == editorUi.drive) {
     service = mxResources.get('googleDrive');
-    img.src = IMAGE_PATH + '/google-drive-logo-white.svg';
+    img.src = '/google-drive-logo-white.svg';
   }
   else if (peer == editorUi.dropbox) {
     service = mxResources.get('dropbox');
-    img.src = IMAGE_PATH + '/dropbox-logo-white.svg';
+    img.src = '/dropbox-logo-white.svg';
   }
   else if (peer == editorUi.oneDrive) {
     service = mxResources.get('oneDrive');
-    img.src = IMAGE_PATH + '/onedrive-logo-white.svg';
+    img.src = '/onedrive-logo-white.svg';
   }
   else if (peer == editorUi.gitHub) {
     service = mxResources.get('github');
-    img.src = IMAGE_PATH + '/github-logo-white.svg';
+    img.src = '/github-logo-white.svg';
   }
   else if (peer == editorUi.trello) {
     service = mxResources.get('trello');
-    img.src = IMAGE_PATH + '/trello-logo-white.svg';
+    img.src = '/trello-logo-white.svg';
   }
 
   var p = document.createElement('p');
@@ -6758,7 +6658,7 @@ export var LibraryDialog = function (editorUi, name, library, initialImages, fil
   div.style.backgroundRepeat = 'no-repeat';
 
   if (images.length == 0 && Graph.fileSupport) {
-    div.style.backgroundImage = 'url(\'' + IMAGE_PATH + '/droptarget.png\')';
+    div.style.backgroundImage = 'url(\'' + '/droptarget.png\')';
   }
 
   var bg = document.createElement('div');
@@ -6910,7 +6810,7 @@ export var LibraryDialog = function (editorUi, name, library, initialImages, fil
               wrapper.parentNode.removeChild(wrapperDiv);
 
               if (images.length == 0) {
-                div.style.backgroundImage = 'url(\'' + IMAGE_PATH + '/droptarget.png\')';
+                div.style.backgroundImage = 'url(\'' + '/droptarget.png\')';
                 bg.style.display = '';
               }
 
@@ -8344,23 +8244,23 @@ export var BtnDialog = function (editorUi, peer, btnLbl, fn) {
 
   if (peer == editorUi.drive) {
     service = mxResources.get('googleDrive');
-    img.src = IMAGE_PATH + '/google-drive-logo-white.svg';
+    img.src = '/google-drive-logo-white.svg';
   }
   else if (peer == editorUi.dropbox) {
     service = mxResources.get('dropbox');
-    img.src = IMAGE_PATH + '/dropbox-logo-white.svg';
+    img.src = '/dropbox-logo-white.svg';
   }
   else if (peer == editorUi.oneDrive) {
     service = mxResources.get('oneDrive');
-    img.src = IMAGE_PATH + '/onedrive-logo-white.svg';
+    img.src = '/onedrive-logo-white.svg';
   }
   else if (peer == editorUi.gitHub) {
     service = mxResources.get('github');
-    img.src = IMAGE_PATH + '/github-logo-white.svg';
+    img.src = '/github-logo-white.svg';
   }
   else if (peer == editorUi.trello) {
     service = mxResources.get('trello');
-    img.src = IMAGE_PATH + '/trello-logo-white.svg';
+    img.src = '/trello-logo-white.svg';
   }
 
   var p = document.createElement('p');
