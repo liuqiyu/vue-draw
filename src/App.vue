@@ -1,10 +1,13 @@
 <template>
-  <div id="app">
-    <router-view />
+  <div class="geEditor"
+       ref="geEditor">
   </div>
+
 </template>
 
 <script>
+import '@/draw/styles/grapheditor.css'
+import { App } from '@/draw/App'
 export default {
   name: 'app',
   data () {
@@ -12,8 +15,12 @@ export default {
 
     }
   },
-  created () {
-    // console.log(mxClient)
+  mounted () {
+    let self = this;
+    App.main(null, self.$refs.geEditor);
+  },
+  methods: {
+
   }
 }
 </script>
