@@ -629,20 +629,20 @@ export var SplashDialog = function (editorUi) {
     }
 
     mxUtils.br(buttons);
-    var link = document.createElement('a');
-    link.setAttribute('href', 'javascript:void(0)');
-    link.style.display = 'inline-block';
-    link.style.marginTop = '8px';
-    mxUtils.write(link, mxResources.get('changeStorage'));
+    // var link = document.createElement('a');
+    // link.setAttribute('href', 'javascript:void(0)');
+    // link.style.display = 'inline-block';
+    // link.style.marginTop = '8px';
+    // mxUtils.write(link, mxResources.get('changeStorage'));
 
-    mxEvent.addListener(link, 'click', function () {
-      editorUi.hideDialog(false);
-      editorUi.setMode(null);
-      editorUi.clearMode();
-      editorUi.showSplash(true);
-    });
+    // mxEvent.addListener(link, 'click', function () {
+    //   editorUi.hideDialog(false);
+    //   editorUi.setMode(null);
+    //   editorUi.clearMode();
+    //   editorUi.showSplash(true);
+    // });
 
-    buttons.appendChild(link);
+    // buttons.appendChild(link);
   }
 
   div.appendChild(buttons);
@@ -2824,7 +2824,6 @@ export var NewDialog = function (editorUi, compact, showName, callback, createOn
         // var tmpDoc = req.getXml();
         var res = await axios.get('/templates/index.xml');
         let tmpDoc = string2XML(res.data)
-        console.log(tmpDoc)
         var node = tmpDoc.documentElement.firstChild;
 
         while (node != null) {
@@ -5669,8 +5668,8 @@ export var MoreShapesDialog = function (editorUi, expanded, entries) {
       for (var j = 0; j < section.entries.length; j++) {
         var entry = section.entries[j];
         tmp.entries.push({
-          id: entry.id, title:
-            editorUi.getResource(entry.title),
+          id: entry.id,
+          title: editorUi.getResource(entry.title),
           desc: editorUi.getResource(entry.desc),
           image: entry.preview
         });

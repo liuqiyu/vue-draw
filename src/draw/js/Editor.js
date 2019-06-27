@@ -5,8 +5,10 @@
 
 import { Editor, PrintDialog } from '@/grapheditor/js/Editor'
 import { Graph } from '@/grapheditor/js/Graph'
+import { Menus } from '@/grapheditor/js/Menus'
 import { ChangePageSetup } from '@/grapheditor/js/EditorUi'
 import { FilenameDialog } from '@/grapheditor/js/Dialogs'
+import { Format } from '@/grapheditor/js/Format'
 import { App } from './App'
 (function () {
 	/**

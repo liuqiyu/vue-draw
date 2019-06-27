@@ -5,6 +5,7 @@
  * Construcs a new toolbar for the given editor.
  */
 import { EditorUi } from './EditorUi'
+import { Menus } from '@/grapheditor/js/Menus'
 
 export function Toolbar (editorUi, container) {
   this.editorUi = editorUi;

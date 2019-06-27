@@ -36,7 +36,8 @@
 	border-left:1px solid #dadce0;
 }
 .geSidebarFooter {
-	border-top:1px solid #dadce0;
+  border-top:1px solid #dadce0;
+  height: 38px!important;
 }
 .geFormatSection {
 	border-bottom:1px solid #dadce0;

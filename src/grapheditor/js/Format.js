@@ -2,7 +2,7 @@
  * Copyright (c) 2006-2012, JGraph Ltd
  */
 
-import { Dialog, PageSetupDialog } from './Editor'
+import { Editor, Dialog, PageSetupDialog } from './Editor'
 import { ChangePageSetup } from './EditorUi'
 import { Graph } from './Graph'
 import { Menus } from './Menus'

@@ -2,14 +2,16 @@
  * Copyright (c) 2006-2017, JGraph Ltd
  * Copyright (c) 2006-2017, Gaudenz Alder
  */
-import { EditorUi } from '@/grapheditor/js/EditorUi'
+import { EditorUi,ChangePageSetup } from '@/grapheditor/js/EditorUi'
 import { Graph } from '@/grapheditor/js/Graph'
 import {Editor,OpenFile} from '@/grapheditor/js/Editor'
 import {ErrorDialog} from './Editor'
+import { OpenDialog } from '@/grapheditor/js/Dialogs'
+import { Format } from '@/grapheditor/js/Format'
 import './Editor'
 import { App } from './App'
 import {DiagramPage} from './Pages'
-import { NewDialog } from './Dialogs'
+import { NewDialog,BackgroundImageDialog } from './Dialogs'
 import {LocalFile} from './LocalFile'
 
 (function()
@@ -3504,9 +3506,10 @@ import {LocalFile} from './LocalFile'
 	 */
 	EditorUi.prototype.createSidebarFooterContainer = function()
 	{
-		var div =  this.createDiv('geSidebarContainer geSidebarFooter');
+		var div = this.createDiv('geSidebarContainer geSidebarFooter');
 		div.style.position = 'absolute';
-		div.style.overflow = 'hidden';
+    div.style.overflow = 'hidden';
+    div.style.height = '38px';
 		
 		var elt2 = document.createElement('a');
 		elt2.className = 'geTitle';

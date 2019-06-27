@@ -5,6 +5,7 @@
  * Editor constructor executed on page load.
  */
 import { Graph } from './Graph.js'
+import { ChangePageSetup } from '@/grapheditor/js/EditorUi'
 export function Editor (chromeless, themes, model, graph, editable) {
   mxEventSource.call(this);
   this.chromeless = (chromeless != null) ? chromeless : this.chromeless;

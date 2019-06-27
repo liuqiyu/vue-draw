@@ -6,10 +6,12 @@ import { Menus, Menu } from '@/grapheditor/js/Menus'
 import { Action } from '@/grapheditor/js/Actions'
 import { Editor } from '@/grapheditor/js/Editor'
 import { DrawioFile } from './DrawioFile'
+import { EditorUi, ChangePageSetup } from '@/grapheditor/js/EditorUi'
 import './Editor'
-import { NewDialog } from './Dialogs'
+import { NewDialog, MoreShapesDialog, BackgroundImageDialog, FindWindow } from './Dialogs'
 import { FilenameDialog } from '@/grapheditor/js/Dialogs'
 import { App } from './App'
+import { mxSettings } from './Settings'
 (function () {
   // Adds scrollbars for menus that exceed the page height
   var mxPopupMenuShowMenu = mxPopupMenu.prototype.showMenu;
@@ -2451,89 +2453,89 @@ import { App } from './App'
       }
     })));
 
-    this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
-      if (urlParams['embed'] == '1') {
-        this.addSubmenu('importFrom', menu, parent);
-        this.addSubmenu('exportAs', menu, parent);
-        this.addSubmenu('embed', menu, parent);
+    // this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
+    //   if (urlParams['embed'] == '1') {
+    //     this.addSubmenu('importFrom', menu, parent);
+    //     this.addSubmenu('exportAs', menu, parent);
+    //     this.addSubmenu('embed', menu, parent);
 
-        if (urlParams['libraries'] == '1') {
-          this.addMenuItems(menu, ['-'], parent);
-          this.addSubmenu('newLibrary', menu, parent);
-          this.addSubmenu('openLibraryFrom', menu, parent);
-        }
+    //     if (urlParams['libraries'] == '1') {
+    //       this.addMenuItems(menu, ['-'], parent);
+    //       this.addSubmenu('newLibrary', menu, parent);
+    //       this.addSubmenu('openLibraryFrom', menu, parent);
+    //     }
 
-        this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename', 'save'], parent);
+    //     this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename', 'save'], parent);
 
-        if (urlParams['saveAndExit'] == '1') {
-          this.addMenuItems(menu, ['saveAndExit'], parent);
-        }
+    //     if (urlParams['saveAndExit'] == '1') {
+    //       this.addMenuItems(menu, ['saveAndExit'], parent);
+    //     }
 
-        this.addMenuItems(menu, ['exit'], parent);
-      }
-      else {
-        var file = this.editorUi.getCurrentFile();
-
-
-        this.addMenuItems(menu, ['new'], parent);
+    //     this.addMenuItems(menu, ['exit'], parent);
+    //   }
+    //   else {
+    //     var file = this.editorUi.getCurrentFile();
 
 
-        this.addSubmenu('openFrom', menu, parent);
-
-        if (isLocalStorage) {
-          this.addSubmenu('openRecent', menu, parent);
-        }
-        if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-          file != null && file.constructor != LocalFile) {
-          menu.addSeparator(parent);
-          var item = this.addMenuItem(menu, 'synchronize', parent);
-
-          if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
-            this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-          }
-        }
-
-        this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
-
-        this.addMenuItems(menu, ['-', 'rename'], parent);
-
-        if (editorUi.isOfflineApp()) {
-          if (navigator.onLine && urlParams['stealth'] != '1') {
-            this.addMenuItems(menu, ['upload'], parent);
-          }
-        }
-        else {
-          this.addMenuItems(menu, ['makeCopy'], parent);
-
-          if (file != null && file.constructor == OneDriveFile) {
-            this.addMenuItems(menu, ['moveToFolder'], parent);
-          }
-        }
+    //     this.addMenuItems(menu, ['new'], parent);
 
 
-        menu.addSeparator(parent);
-        this.addSubmenu('importFrom', menu, parent);
-        this.addSubmenu('exportAs', menu, parent);
-        menu.addSeparator(parent);
-        this.addSubmenu('embed', menu, parent);
-        this.addSubmenu('publish', menu, parent);
-        menu.addSeparator(parent);
-        this.addSubmenu('newLibrary', menu, parent);
-        this.addSubmenu('openLibraryFrom', menu, parent);
+    //     this.addSubmenu('openFrom', menu, parent);
 
-        if (file != null && file.isRevisionHistorySupported()) {
-          this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
-        }
+    //     if (isLocalStorage) {
+    //       this.addSubmenu('openRecent', menu, parent);
+    //     }
+    //     if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+    //       file != null && file.constructor != LocalFile) {
+    //       menu.addSeparator(parent);
+    //       var item = this.addMenuItem(menu, 'synchronize', parent);
 
-        this.addMenuItems(menu, ['-', 'pageSetup'], parent);
+    //       if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
+    //         this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
+    //       }
+    //     }
 
-        // Cannot use print in standalone mode on iOS as we cannot open new windows
-        if (!mxClient.IS_IOS || !navigator.standalone) {
-          this.addMenuItems(menu, ['print'], parent);
-        }
+    //     this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
 
-        this.addMenuItems(menu, ['-', 'close']);
-      }
-    })));
+    //     this.addMenuItems(menu, ['-', 'rename'], parent);
+
+    //     if (editorUi.isOfflineApp()) {
+    //       if (navigator.onLine && urlParams['stealth'] != '1') {
+    //         this.addMenuItems(menu, ['upload'], parent);
+    //       }
+    //     }
+    //     else {
+    //       this.addMenuItems(menu, ['makeCopy'], parent);
+
+    //       if (file != null && file.constructor == OneDriveFile) {
+    //         this.addMenuItems(menu, ['moveToFolder'], parent);
+    //       }
+    //     }
+
+
+    //     menu.addSeparator(parent);
+    //     this.addSubmenu('importFrom', menu, parent);
+    //     this.addSubmenu('exportAs', menu, parent);
+    //     menu.addSeparator(parent);
+    //     this.addSubmenu('embed', menu, parent);
+    //     this.addSubmenu('publish', menu, parent);
+    //     menu.addSeparator(parent);
+    //     this.addSubmenu('newLibrary', menu, parent);
+    //     this.addSubmenu('openLibraryFrom', menu, parent);
+
+    //     if (file != null && file.isRevisionHistorySupported()) {
+    //       this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
+    //     }
+
+    //     this.addMenuItems(menu, ['-', 'pageSetup'], parent);
+
+    //     // Cannot use print in standalone mode on iOS as we cannot open new windows
+    //     if (!mxClient.IS_IOS || !navigator.standalone) {
+    //       this.addMenuItems(menu, ['print'], parent);
+    //     }
+
+    //     this.addMenuItems(menu, ['-', 'close']);
+    //   }
+    // })));
   };
 })();

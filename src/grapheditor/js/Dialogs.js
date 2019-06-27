@@ -7,6 +7,7 @@
 import { jscolor } from '../jscolor/jscolor'
 import { Dialog, Editor } from './Editor'
 import { Graph } from './Graph'
+import { EditorUi } from './EditorUi'
 export function OpenDialog () {
   var iframe = document.createElement('iframe');
   iframe.style.backgroundColor = 'transparent';

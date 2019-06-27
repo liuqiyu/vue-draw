@@ -10,8 +10,8 @@ import { Sidebar } from './Sidebar'
 import { Graph, HoverIcons } from './Graph'
 import { Format } from './Format'
 import { Toolbar } from './Toolbar'
-import { ColorDialog } from './Dialogs'
-import { Dialog, OpenFile } from './Editor'
+import { ColorDialog, OpenDialog } from './Dialogs'
+import { Editor, Dialog, OpenFile } from './Editor'
 mxCellEditor.prototype.isContentEditing = function () {
   var state = this.graph.view.getState(this.editingCell);
 
@@ -2630,6 +2630,7 @@ EditorUi.prototype.createTabContainer = function () {
  * Creates the required containers.
  */
 EditorUi.prototype.createDivs = function () {
+
   // Sets static style for containers
   this.menubarContainer = this.createDiv('geMenubarContainer');//顶部菜单栏
   this.menubarContainer.style.top = '0px';

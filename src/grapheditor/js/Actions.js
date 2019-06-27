@@ -6,6 +6,8 @@
  */
 
 import { Editor, OpenFile } from './Editor'
+import { ChangePageSetup } from '@/grapheditor/js/EditorUi'
+import { OpenDialog, OutlineWindow, LayersWindow } from './Dialogs'
 export function Actions (editorUi) {
   this.editorUi = editorUi;
   this.actions = new Object();

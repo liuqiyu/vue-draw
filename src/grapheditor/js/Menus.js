@@ -6,6 +6,7 @@
  */
 import { Editor } from './Editor'
 import { ColorDialog } from './Dialogs'
+
 export function Menus (editorUi) {
   this.editorUi = editorUi;
   this.menus = new Object();

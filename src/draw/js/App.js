@@ -16,9 +16,9 @@ import darkTheme from '@/draw/styles/dark-default.js'
 import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { Editor, OpenFile } from '@/grapheditor/js/Editor'
 import { Graph } from '@/grapheditor/js/Graph'
-import { StorageDialog, SplashDialog } from './Dialogs'
+import { OpenDialog } from '@/grapheditor/js/Dialogs'
 import { mxSettings } from './Settings'
-import { CreateDialog } from './Dialogs'
+import { StorageDialog, SplashDialog, CreateDialog } from './Dialogs'
 import { LocalFile } from './LocalFile'
 import './Editor'
 import './EditorUi'
@@ -36,18 +36,7 @@ export function App (editor, container, lightbox) {
     window.onunload = mxUtils.bind(this, function () {
       debugger
       var file = this.getCurrentFile();
-
-      if (file != null && file.constructor == DriveFile && file.isModified() && this.drive != null) {
-        EditorUi.logEvent({
-          category: 'DISCARD-SAVE-FILE-' + file.getHash() + '.' +
-            file.desc.headRevisionId + '.' + file.desc.modifiedDate + '-size-' + file.getSize(),
-          action: 'time-' + new Date().toISOString() + '-saved-' +
-            ((file.lastSaved != null) ? file.lastSaved.toISOString() : 'never') +
-            ((this.editor.autosave) ? '-autosave-on' : '-autosave-off'),
-          label: (this.drive.user != null) ? this.drive.user.id : 'unknown-user'
-        });
-      }
-      else if (file != null && file.isModified()) {
+      if (file != null && file.isModified()) {
         EditorUi.logEvent({
           category: 'DISCARD-SAVE-FILE-' + file.getHash(), action: 'unload',
           label: ((this.editor.autosave) ? 'autosave-on' : 'autosave-off')
@@ -434,9 +423,9 @@ App.main = function (callback, container) {
   /**
    * Asynchronous MathJax extension.
    */
-  if (urlParams['math'] != '0') {
-    Editor.initMath();
-  }
+  // if (urlParams['math'] != '0') {
+  //   Editor.initMath();
+  // }
   function doLoad () {
     mxResources.loadDefaultBundle = false
     mxResources.parse(bundle)
@@ -729,83 +718,6 @@ App.prototype.init = function () {
 			 */
       if (typeof gapi !== 'undefined') {
         var doInit = mxUtils.bind(this, function () {
-					/**
-					 * Holds the x-coordinate of the point.
-					 */
-          this.drive = new DriveClient(this);
-
-					/**
-					 * Adds important notice for new app if drive file is loaded in old app.
-					 */
-          if (this.drive.appId == '420247213240') {
-            this.editor.addListener('fileLoaded', mxUtils.bind(this, function () {
-              var file = this.getCurrentFile();
-
-              if (file != null && file.constructor == DriveFile) {
-                var td = document.getElementById('geFooterItem2');
-
-                if (td != null) {
-                  td.innerHTML = '<a href="https://support.draw.io/display/DO/2014/11/27/Switching+application+in+Google+Drive" ' +
-                    'target="_blank" title="IMPORTANT NOTICE">IMPORTANT NOTICE</a>';
-                }
-              }
-            }));
-          }
-
-          this.drive.addListener('userChanged', mxUtils.bind(this, function () {
-            this.updateUserElement();
-            this.restoreLibraries();
-            this.checkLicense();
-
-            if (this.drive.user != null && (!isLocalStorage || mxSettings.settings == null ||
-              mxSettings.settings.closeRealtimeWarning == null) &&
-              (!this.editor.chromeless || this.editor.editable)) {
-              this.drive.checkRealtimeFiles(mxUtils.bind(this, function () {
-                var footer = document.createElement('div');
-                footer.style.cssText = 'position:absolute;bottom:0px;max-width:90%;padding:10px;padding-right:26px;' +
-                  'white-space:nowrap;left:50%;bottom:2px;';
-                footer.className = 'geStatusAlert';
-
-                mxUtils.setPrefixedStyle(footer.style, 'transform', 'translate(-50%,110%)');
-                mxUtils.setPrefixedStyle(footer.style, 'transition', 'all 1s ease');
-                footer.style.whiteSpace = 'nowrap';
-                footer.innerHTML = '<a href="https://desk.draw.io/support/solutions/articles/16000092210" ' +
-                  'target="_blank" style="display:inline;text-decoration:none;font-weight:700;font-size:13px;opacity:1;">' +
-                  '<img src="' + this.editor.graph.warningImage.src + '" border="0" style="margin-top:-4px;margin-right:2px;" valign="middle"/>&nbsp;' +
-                  'You need to take action to convert legacy files. Click here.&nbsp;' +
-                  '<img src="' + this.editor.graph.warningImage.src + '" border="0" style="margin-top:-4px;margin-left:2px;" valign="middle"/></a>';
-
-                var img = document.createElement('img');
-
-                img.setAttribute('src', Dialog.prototype.closeImage);
-                img.setAttribute('title', mxResources.get('close'));
-                img.style.position = 'absolute';
-                img.style.cursor = 'pointer';
-                img.style.right = '10px';
-                img.style.top = '12px';
-
-                footer.appendChild(img);
-
-                mxEvent.addListener(img, 'click', mxUtils.bind(this, function () {
-                  footer.parentNode.removeChild(footer);
-                  this.hideFooter();
-
-                  // Close permanently
-                  if (isLocalStorage && mxSettings.settings != null) {
-                    mxSettings.settings.closeRealtimeWarning = Date.now();
-                    mxSettings.save();
-                  }
-                }));
-
-                document.body.appendChild(footer);
-
-                window.setTimeout(mxUtils.bind(this, function () {
-                  mxUtils.setPrefixedStyle(footer.style, 'transform', 'translate(-50%,0%)');
-                }), 1500);
-              }));
-            }
-          }))
-
           // Notifies listeners of new client
           this.fireEvent(new mxEventObject('clientLoaded', 'client', this.drive));
         });
@@ -1058,17 +970,6 @@ App.prototype.getEditBlankXml = function () {
     return this.getFileData(true);
   }
 };
-
-/**
- * Updates action states depending on the selection.
- */
-// App.prototype.updateActionStates = function () {
-//   EditorUi.prototype.updateActionStates.apply(this, arguments);
-//   var file = this.getCurrentFile();
-//   // this.actions.get('revisionHistory').setEnabled(file != null &&
-//   //   ((file.constructor == DriveFile && file.isEditable()) ||
-//   //     file.constructor == DropboxFile));
-// };
 
 /**
  * Updates draft in local storage
@@ -4189,195 +4090,6 @@ App.prototype.updateUserElement = function () {
           }));
 
           this.userPanel.appendChild(img);
-
-          if (this.drive != null) {
-            var driveUser = this.drive.getUser();
-
-            if (driveUser != null) {
-              connected = true;
-              this.userPanel.innerHTML += '<table title="User ID: ' + driveUser.id +
-                '" style="font-size:10pt;padding:20px 20px 10px 10px;">' +
-                '<tr><td valign="top">' +
-                ((driveUser.pictureUrl != null) ?
-                  '<img width="80" height="80" style="margin-right:10px;border-radius:50%;" src="' + driveUser.pictureUrl + '"/>' :
-                  '<img width="80" height="80" style="margin-right:4px;margin-top:2px;" src="' + this.defaultUserPicture + '"/>') +
-                '</td><td valign="top" style="white-space:nowrap;' +
-                ((driveUser.pictureUrl != null) ? 'padding-top:14px;' : '') +
-                '"><b>' + mxUtils.htmlEntities(driveUser.displayName) + '</b><br>' +
-                '<small>' + mxUtils.htmlEntities(driveUser.email) + '</small><br><br>' +
-                '<small>' + mxResources.get('googleDrive') + '</small></tr></table>';
-              var div = document.createElement('div');
-              div.style.textAlign = 'center';
-              div.style.paddingBottom = '12px';
-              div.style.whiteSpace = 'nowrap';
-
-              // LATER: Cannot change user while file is open since close will not work with new
-              // credentials and closing the file using fileLoaded(null) will show splash dialog.
-              div.appendChild(mxUtils.button(mxResources.get('signOut'), mxUtils.bind(this, function () {
-                var file = this.getCurrentFile();
-
-                if (file != null && file.constructor == DriveFile) {
-                  this.confirm(mxResources.get('areYouSure'), mxUtils.bind(this, function () {
-                    this.spinner.spin(document.body, mxResources.get('signOut'));
-
-                    this.diagramContainer.style.display = 'none';
-                    this.formatContainer.style.display = 'none';
-                    this.hsplit.style.display = 'none';
-                    this.sidebarContainer.style.display = 'none';
-                    this.sidebarFooterContainer.style.display = 'none';
-
-                    if (this.tabContainer != null) {
-                      this.tabContainer.style.display = 'none';
-                    }
-
-                    file.close();
-
-                    // LATER: Use callback to wait for thumbnail update
-                    window.setTimeout(mxUtils.bind(this, function () {
-                      // Workaround to disable the splash screen before reload
-                      this.showDialog = function () { };
-                      window.location.hash = '';
-                      this.drive.clearUserId();
-                      gapi.auth.signOut();
-
-                      // Reload page to reset client auth
-                      window.location.reload();
-                    }), (file != null && file.constructor == DriveFile) ? 2000 : 0);
-                  }));
-                }
-                else {
-                  this.drive.clearUserId();
-                  this.drive.setUser(null);
-                  gapi.auth.signOut();
-                }
-              })));
-
-              this.userPanel.appendChild(div);
-            }
-          }
-
-          var addUser = mxUtils.bind(this, function (user, logo, logout, label) {
-            if (user != null) {
-              if (connected) {
-                this.userPanel.appendChild(document.createElement('hr'));
-              }
-
-              connected = true;
-              this.userPanel.innerHTML += '<table style="font-size:10pt;padding:20px 20px 10px 10px;"><tr><td valign="top">' +
-                ((logo != null) ? '<img style="margin-right:10px;" src="' + logo + '" width="40" height="40"/></td>' : '') +
-                '<td valign="middle" style="white-space:nowrap;"><b>' + mxUtils.htmlEntities(user.displayName) + '</b>' +
-                ((user.email != null) ? '<br><font color="gray">' + mxUtils.htmlEntities(user.email) + '</font>' : '') +
-                ((label != null) ? '<br><br><small>' + mxUtils.htmlEntities(label) + '</small>' : '') +
-                '</td></tr></table>';
-              var div = document.createElement('div');
-              div.style.textAlign = 'center';
-              div.style.paddingBottom = '12px';
-              div.style.whiteSpace = 'nowrap';
-
-              if (logout != null) {
-                div.appendChild(mxUtils.button(mxResources.get('signOut'), logout));
-              }
-
-              this.userPanel.appendChild(div);
-            }
-          });
-
-          if (this.dropbox != null) {
-            addUser(this.dropbox.getUser(), IMAGE_PATH + '/dropbox-logo.svg', mxUtils.bind(this, function () {
-              var file = this.getCurrentFile();
-
-              if (file != null && file.constructor == DropboxFile) {
-                var doLogout = mxUtils.bind(this, function () {
-                  this.dropbox.logout();
-                  window.location.hash = '';
-                });
-
-                if (!file.isModified()) {
-                  doLogout();
-                }
-                else {
-                  this.confirm(mxResources.get('allChangesLost'), null, doLogout,
-                    mxResources.get('cancel'), mxResources.get('discardChanges'));
-                }
-              }
-              else {
-                this.dropbox.logout();
-              }
-            }), mxResources.get('dropbox'));
-          }
-
-          if (this.oneDrive != null) {
-            addUser(this.oneDrive.getUser(), IMAGE_PATH + '/onedrive-logo.svg', mxUtils.bind(this, function () {
-              var file = this.getCurrentFile();
-
-              if (file != null && file.constructor == OneDriveFile) {
-                var doLogout = mxUtils.bind(this, function () {
-                  this.oneDrive.logout();
-                  window.location.hash = '';
-                });
-
-                if (!file.isModified()) {
-                  doLogout();
-                }
-                else {
-                  this.confirm(mxResources.get('allChangesLost'), null, doLogout,
-                    mxResources.get('cancel'), mxResources.get('discardChanges'));
-                }
-              }
-              else {
-                this.oneDrive.logout();
-              }
-            }), mxResources.get('oneDrive'));
-          }
-
-          if (this.gitHub != null) {
-            addUser(this.gitHub.getUser(), IMAGE_PATH + '/github-logo.svg', mxUtils.bind(this, function () {
-              var file = this.getCurrentFile();
-
-              if (file != null && file.constructor == GitHubFile) {
-                var doLogout = mxUtils.bind(this, function () {
-                  this.gitHub.logout();
-                  window.location.hash = '';
-                });
-
-                if (!file.isModified()) {
-                  doLogout();
-                }
-                else {
-                  this.confirm(mxResources.get('allChangesLost'), null, doLogout,
-                    mxResources.get('cancel'), mxResources.get('discardChanges'));
-                }
-              }
-              else {
-                this.gitHub.logout();
-              }
-            }), mxResources.get('github'));
-          }
-
-          //TODO We have no user info from Trello, how we can create a user?
-          if (this.trello != null) {
-            addUser(this.trello.getUser(), IMAGE_PATH + '/trello-logo.svg', mxUtils.bind(this, function () {
-              var file = this.getCurrentFile();
-
-              if (file != null && file.constructor == TrelloFile) {
-                var doLogout = mxUtils.bind(this, function () {
-                  this.trello.logout();
-                  window.location.hash = '';
-                });
-
-                if (!file.isModified()) {
-                  doLogout();
-                }
-                else {
-                  this.confirm(mxResources.get('allChangesLost'), null, doLogout,
-                    mxResources.get('cancel'), mxResources.get('discardChanges'));
-                }
-              }
-              else {
-                this.trello.logout();
-              }
-            }), mxResources.get('trello'));
-          }
 
           if (!connected) {
             var div = document.createElement('div');
