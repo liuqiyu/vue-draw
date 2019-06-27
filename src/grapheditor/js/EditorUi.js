@@ -11,7 +11,7 @@ import { Graph, HoverIcons } from './Graph'
 import { Format } from './Format'
 import { Toolbar } from './Toolbar'
 import { ColorDialog } from './Dialogs'
-import { Dialog } from './Editor'
+import { Dialog, OpenFile } from './Editor'
 mxCellEditor.prototype.isContentEditing = function () {
   var state = this.graph.view.getState(this.editingCell);
 

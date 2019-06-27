@@ -4,6 +4,8 @@ import router from './router'
 import store from './store'
 import './plugins/element.js'
 // import './components/index'
+import axios from "axios";
+Vue.prototype.$axios = axios;
 
 Vue.config.productionTip = false
 

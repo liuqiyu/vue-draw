@@ -4,7 +4,8 @@
 /**
  * Constructs the actions object for the given UI.
  */
-import { Editor } from './Editor'
+
+import { Editor, OpenFile } from './Editor'
 export function Actions (editorUi) {
   this.editorUi = editorUi;
   this.actions = new Object();

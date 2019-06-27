@@ -7,7 +7,7 @@
 
 <script>
 import '@/draw/styles/grapheditor.css'
-import { App } from '@/draw/App'
+import { App } from '@/draw/js/App'
 export default {
   name: 'app',
   data () {

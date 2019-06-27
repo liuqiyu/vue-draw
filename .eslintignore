@@ -1,5 +1,6 @@
 public/src/*.js
-src/draw/*.js
+
 src/grapheditor/js/*.js
-src/grapheditor/sanitizer/sanitizer.min.js
-src/grapheditor/jscolor/jscolor.js
+src/grapheditor/*/*.js
+src/draw/js/*/*.js
+src/draw/js/*.js

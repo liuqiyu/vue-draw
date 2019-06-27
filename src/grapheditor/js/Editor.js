@@ -448,7 +448,7 @@ Editor.prototype.readGraphState = function (node) {
  * Sets the XML node for the current diagram.
  */
 Editor.prototype.setGraphXml = function (node) {
-  debugger
+  // debugger
   if (node != null) {
     var dec = new mxCodec(node.ownerDocument);
 
@@ -621,7 +621,7 @@ Editor.prototype.destroy = function () {
  * Class for asynchronously opening a new window and loading a file at the same
  * time. This acts as a bridge between the open dialog and the new editor.
  */
-var OpenFile = function (done) {
+export var OpenFile = function (done) {
   this.producer = null;
   this.consumer = null;
   this.done = done;
