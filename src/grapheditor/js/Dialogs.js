@@ -5,8 +5,8 @@
  * Constructs a new open dialog.
  */
 import { jscolor } from '../jscolor/jscolor'
-import { Dialog } from './Editor'
-import { Editor } from './Editor'
+import { Dialog, Editor } from './Editor'
+import { Graph } from './Graph'
 export function OpenDialog () {
   var iframe = document.createElement('iframe');
   iframe.style.backgroundColor = 'transparent';

@@ -888,7 +888,6 @@ DrawioFile.prototype.getData = function () {
 DrawioFile.prototype.open = function () {
   this.stats.opened++;
   var data = this.getData();
-  // debugger
   if (data != null) {
     this.ui.setFileData(data);
 

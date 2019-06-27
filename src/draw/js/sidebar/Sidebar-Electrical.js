@@ -1,3 +1,4 @@
+import { Sidebar } from '@/grapheditor/js/Sidebar';
 (function()
 {
 	// Adds electrical stencils

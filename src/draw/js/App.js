@@ -13,19 +13,19 @@
 import bundle from '@/draw/resources/dia_zh.js'
 import defaultStyle from '@/draw/styles/default.js'
 import darkTheme from '@/draw/styles/dark-default.js'
-
 import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { Editor, OpenFile } from '@/grapheditor/js/Editor'
 import { Graph } from '@/grapheditor/js/Graph'
+import { StorageDialog, SplashDialog } from './Dialogs'
+import { mxSettings } from './Settings'
+import { CreateDialog } from './Dialogs'
+import { LocalFile } from './LocalFile'
 import './Editor'
 import './EditorUi'
 import './Pages'
 import './spin/spin.min.js'
 import './Menus'
-import { mxSettings } from './Settings'
-import { CreateDialog } from './Dialogs'
-import { LocalFile } from './LocalFile'
-import { StorageDialog, SplashDialog } from './Dialogs'
+import './sidebar/Sidebar'
 export function App (editor, container, lightbox) {
   EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
     (urlParams['lightbox'] == '1' || (uiTheme == 'min' &&
@@ -34,6 +34,7 @@ export function App (editor, container, lightbox) {
   // Logs unloading of window with modifications for Google Drive file
   if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp) {
     window.onunload = mxUtils.bind(this, function () {
+      debugger
       var file = this.getCurrentFile();
 
       if (file != null && file.constructor == DriveFile && file.isModified() && this.drive != null) {
@@ -66,6 +67,7 @@ export function App (editor, container, lightbox) {
 
   // Global helper method to deal with popup blockers
   window.openWindow = mxUtils.bind(this, function (url, pre, fallback) {
+    debugger
     var wnd = null;
 
     try {
@@ -447,9 +449,7 @@ App.main = function (callback, container) {
     if (callback != null) {
       callback(ui);
     }
-
   }
-
   // Optional override for autosaveDelay and defaultEdgeLength
   try {
     if (mxSettings.settings != null) {
@@ -495,229 +495,6 @@ App.main = function (callback, container) {
   }
   doLoad();
 }
-/**
- * Program flow starts here.
- * 
- * Optional callback is called with the app instance.
- */
-// App.main = function (callback, createUi) {
-//   // Logs uncaught errors
-//   window.onerror = function (message, url, linenumber, colno, err) {
-//     EditorUi.logError(message, url, linenumber, colno, err);
-//   };
-
-//   // Redirects to the latest AWS icons
-//   if (document.referrer != null && urlParams['libs'] == 'aws3' &&
-//     document.referrer.substring(0, 42) == 'https://aws.amazon.com/architecture/icons/') {
-//     urlParams['libs'] = 'aws4';
-//   }
-
-//   if (window.mxscript != null) {
-
-//     // Loads Pusher API
-//     if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp && DrawioFile.SYNC == 'auto' &&
-//       urlParams['stealth'] != '1' && urlParams['offline'] != '1') {
-//       // TODO: Check if async loading is fast enough
-//       mxscript(App.PUSHER_URL);
-//     }
-
-//     // Loads plugins
-//     if (urlParams['plugins'] != '0' && urlParams['offline'] != '1') {
-//       // mxSettings is not yet initialized in configure mode, redirect parameter
-//       // to p URL parameter in caller for plugins in embed mode
-//       var plugins = (mxSettings.settings != null) ? mxSettings.getPlugins() : null;
-//       var temp = urlParams['p'];
-//       App.initPluginCallback();
-
-//       if (temp != null) {
-//         // Mapping from key to URL in App.plugins
-//         App.loadPlugins(temp.split(';'));
-//       }
-
-//       if (plugins != null && plugins.length > 0 && urlParams['plugins'] != '0') {
-//         // Loading plugins inside the asynchronous block below stops the page from loading so a 
-//         // hardcoded message for the warning dialog is used since the resources are loadd below
-//         var warning = 'The page has requested to load the following plugin(s):\n \n {1}\n \n Would you like to load these plugin(s) now?\n \n NOTE : Only allow plugins to run if you fully understand the security implications of doing so.\n';
-//         var tmp = window.location.protocol + '//' + window.location.host;
-//         var local = true;
-
-//         for (var i = 0; i < plugins.length && local; i++) {
-//           if (plugins[i].charAt(0) != '/' && plugins[i].substring(0, tmp.length) != tmp) {
-//             local = false;
-//           }
-//         }
-
-//         if (local || mxUtils.confirm(mxResources.replacePlaceholders(warning, [plugins.join('\n')]).replace(/\\n/g, '\n'))) {
-//           for (var i = 0; i < plugins.length; i++) {
-//             try {
-//               if (App.pluginsLoaded[plugins[i]] == null) {
-//                 App.pluginsLoaded[plugins[i]] = true;
-//                 App.embedModePluginsCount++;
-//                 mxscript(plugins[i]);
-//               }
-//             }
-//             catch (e) {
-//               // ignore
-//             }
-//           }
-//         }
-//       }
-//     }
-
-//     // Loads gapi for all browsers but IE8 and below if not disabled or if enabled and in embed mode
-//     // Special case: Cannot load in asynchronous code below
-//     if (typeof window.DriveClient === 'function' &&
-//       (typeof gapi === 'undefined' && (((urlParams['embed'] != '1' && urlParams['gapi'] != '0') ||
-//         (urlParams['embed'] == '1' && urlParams['gapi'] == '1')) && isSvgBrowser &&
-//         isLocalStorage && (document.documentMode == null || document.documentMode >= 10)))) {
-//       mxscript('https://apis.google.com/js/api.js?onload=DrawGapiClientCallback', null, null, null, mxClient.IS_SVG);
-//     }
-//     // Disables client
-//     else if (typeof window.gapi === 'undefined') {
-//       window.DriveClient = null;
-//     }
-//   }
-
-// 	/**
-// 	 * Asynchronous MathJax extension.
-// 	 */
-//   if (urlParams['math'] != '0') {
-//     Editor.initMath();
-//   }
-
-//   function doLoad (bundle) {
-//     // Prefetches asynchronous requests so that below code runs synchronous
-//     // Loading the correct bundle (one file) via the fallback system in mxResources. The stylesheet
-//     // is compiled into JS in the build process and is only needed for local development.
-//     mxUtils.getAll([bundle,
-//       STYLE_PATH + '/default.xml', STYLE_PATH + '/dark-default.xml'], function (xhr) {
-//         // Adds bundle text to resources
-//         mxResources.parse(xhr[0].getText());
-
-//         // Prepares themes with mapping from old default-style to old XML file
-//         if (xhr.length > 2) {
-//           Graph.prototype.defaultThemes['default-style2'] = xhr[1].getDocumentElement();
-//           Graph.prototype.defaultThemes['darkTheme'] = xhr[2].getDocumentElement();
-//         }
-
-//         // Main
-//         var ui = (createUi != null) ? createUi() : new App(new Editor(
-//           urlParams['chrome'] == '0' || uiTheme == 'min',
-//           null, null, null, urlParams['chrome'] != '0'));
-//         if (callback != null) {
-//           callback(ui);
-//         }
-//         /**
-//          * For developers only
-//          */
-//         if (urlParams['chrome'] != '0' && urlParams['test'] == '1') {
-//           EditorUi.debug('Started in ' + (new Date().getTime() - t0.getTime()) + 'ms');
-
-//           if (urlParams['export'] != null) {
-//             EditorUi.debug('Export:', EXPORT_URL);
-//           }
-//         }
-//       }, function (xhr) {
-//         var st = document.getElementById('geStatus');
-
-//         if (st != null) {
-//           st.innerHTML = 'Error loading page. <a>Please try refreshing.</a>';
-
-//           // Tries reload with default resources in case any language resources were not available
-//           st.getElementsByTagName('a')[0].onclick = function () {
-//             mxLanguage = 'en';
-//             doLoad(mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
-//               mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage));
-//           };
-//         }
-//       });
-//   };
-
-//   function doMain () {
-//     // Adds required resources (disables loading of fallback properties, this can only
-//     // be used if we know that all keys are defined in the language specific file)
-//     mxResources.loadDefaultBundle = false;
-//     doLoad(mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
-//       mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage));
-//   };
-
-//   // Optional override for autosaveDelay and defaultEdgeLength
-//   try {
-//     if (mxSettings.settings != null) {
-//       if (mxSettings.settings.autosaveDelay != null) {
-//         var val = parseInt(mxSettings.settings.autosaveDelay);
-
-//         if (!isNaN(val) && val > 0) {
-//           DrawioFile.prototype.autosaveDelay = val;
-
-//           if (window.console != null) {
-//             console.log('Setting autosaveDelay to ' + DrawioFile.prototype.autosaveDelay);
-//           }
-//         }
-//         else {
-//           if (window.console != null) {
-//             console.log('Invalid value for autosaveDelay');
-//           }
-//         }
-//       }
-
-//       if (mxSettings.settings.defaultEdgeLength != null) {
-//         var val = parseInt(mxSettings.settings.defaultEdgeLength);
-
-//         if (!isNaN(val) && val > 0) {
-//           Graph.prototype.defaultEdgeLength = val;
-
-//           if (window.console != null) {
-//             console.log('Setting defaultEdgeLength to ' + Graph.prototype.defaultEdgeLength);
-//           }
-//         }
-//         else {
-//           if (window.console != null) {
-//             console.log('Invalid value for defaultEdgeLength');
-//           }
-//         }
-//       }
-//     }
-//   }
-//   catch (e) {
-//     if (window.console != null) {
-//       console.error(e);
-//     }
-//   }
-
-//   // Sends load event if configuration is requested and waits for configure action
-//   if (urlParams['configure'] == '1') {
-//     var op = window.opener || window.parent;
-
-//     var configHandler = function (evt) {
-//       if (evt.source == op) {
-//         try {
-//           var data = JSON.parse(evt.data);
-
-//           if (data != null && data.action == 'configure') {
-//             mxEvent.removeListener(window, 'message', configHandler);
-//             Editor.configure(data.config, true);
-//             mxSettings.load();
-//             doMain();
-//           }
-//         }
-//         catch (e) {
-//           if (window.console != null) {
-//             console.log('Error in configuration: ' + e);
-//           }
-//         }
-//       }
-//     };
-
-//     // Receives XML message from opener and puts it into the graph
-//     mxEvent.addListener(window, 'message', configHandler);
-//     op.postMessage(JSON.stringify({ event: 'configure' }), '*');
-//   }
-//   else {
-//     doMain();
-//   }
-// };
-
 //Extends EditorUi
 mxUtils.extend(App, EditorUi);
 
@@ -1285,14 +1062,13 @@ App.prototype.getEditBlankXml = function () {
 /**
  * Updates action states depending on the selection.
  */
-App.prototype.updateActionStates = function () {
-  EditorUi.prototype.updateActionStates.apply(this, arguments);
-
-  var file = this.getCurrentFile();
-  this.actions.get('revisionHistory').setEnabled(file != null &&
-    ((file.constructor == DriveFile && file.isEditable()) ||
-      file.constructor == DropboxFile));
-};
+// App.prototype.updateActionStates = function () {
+//   EditorUi.prototype.updateActionStates.apply(this, arguments);
+//   var file = this.getCurrentFile();
+//   // this.actions.get('revisionHistory').setEnabled(file != null &&
+//   //   ((file.constructor == DriveFile && file.isEditable()) ||
+//   //     file.constructor == DropboxFile));
+// };
 
 /**
  * Updates draft in local storage
@@ -1443,11 +1219,12 @@ App.prototype.updateDocumentTitle = function () {
     var title = this.editor.appName;
     var file = this.getCurrentFile();
 
-    if (this.isOfflineApp()) {
-      title += ' app';
-    }
+    // if (this.isOfflineApp()) {
+    //   title += ' app';
+    // }
 
     if (file != null) {
+      // debugger
       var filename = (file.getTitle() != null) ? file.getTitle() : this.defaultFilename;
       title = filename + ' - ' + title;
     }
@@ -1888,59 +1665,27 @@ App.prototype.loadGapi = function (then) {
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.load = function () {
-  // Checks if we're running in embedded mode
-  if (urlParams['embed'] != '1') {
-    if (this.spinner.spin(document.body, mxResources.get('starting'))) {
-      try {
-        this.stateArg = (urlParams['state'] != null && this.drive != null) ? JSON.parse(decodeURIComponent(urlParams['state'])) : null;
-      }
-      catch (e) {
-        // ignores invalid state args
-      }
+  if (this.spinner.spin(document.body, mxResources.get('starting'))) {
+    try {
+      this.stateArg = (urlParams['state'] != null && this.drive != null) ? JSON.parse(decodeURIComponent(urlParams['state'])) : null;
+    }
+    catch (e) {
+    }
+    this.editor.graph.setEnabled(this.getCurrentFile() != null);
 
-      this.editor.graph.setEnabled(this.getCurrentFile() != null);
-
-      // Passes the userId from the state parameter to the client
-      if ((window.location.hash == null || window.location.hash.length == 0) &&
-        this.drive != null && this.stateArg != null && this.stateArg.userId != null) {
-        this.drive.setUserId(this.stateArg.userId);
+    // Legacy support for fileId parameter which is moved to the hash tag
+    if (urlParams['fileId'] != null) {
+      window.location.hash = 'G' + urlParams['fileId'];
+      window.location.search = this.getSearch(['fileId']);
+    }
+    else {
+      if (this.mode == App.MODE_GOOGLE) {
+        this.mode = null;
       }
-
-      // Legacy support for fileId parameter which is moved to the hash tag
-      if (urlParams['fileId'] != null) {
-        window.location.hash = 'G' + urlParams['fileId'];
-        window.location.search = this.getSearch(['fileId']);
-      }
-      else {
-        // Asynchronous or disabled loading of client
-        if (this.drive == null) {
-          if (this.mode == App.MODE_GOOGLE) {
-            this.mode = null;
-          }
-
-          this.start();
-        }
-        else {
-          this.loadGapi(mxUtils.bind(this, function () {
-            if (urlParams['convert-realtime'] == '1') {
-              this.spinner.stop();
-              this.drive.convertRealtimeFiles();
-            }
-            else {
-              this.start();
-            }
-          }));
-        }
-      }
+      this.start();
     }
   }
-  else {
-    this.restoreLibraries();
 
-    if (urlParams['gapi'] == '1') {
-      this.loadGapi(function () { });
-    }
-  }
 };
 
 /**
@@ -2300,10 +2045,8 @@ App.prototype.start = function () {
  */
 App.prototype.showSplash = function (force) {
   var serviceCount = this.getServiceCount(true, true);
-
   var showSecondDialog = mxUtils.bind(this, function () {
     var dlg = new SplashDialog(this);
-
     this.showDialog(dlg.container, 340, (serviceCount < 2 ||
       mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) ? 200 : 260, true, true,
       mxUtils.bind(this, function (cancel) {
@@ -2901,7 +2644,6 @@ App.prototype.getPeerForMode = function (mode) {
  */
 App.prototype.createFile = function (title, data, libs, mode, done, replace, folderId, tempFile) {
   mode = (tempFile) ? null : ((mode != null) ? mode : this.mode);
-
   if (title != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
     data = (data != null) ? data : this.emptyDiagramXml;
 
@@ -2921,67 +2663,8 @@ App.prototype.createFile = function (title, data, libs, mode, done, replace, fol
     });
 
     try {
-      if (mode == App.MODE_GOOGLE && this.drive != null) {
-        if (folderId == null && this.stateArg != null && this.stateArg.folderId != null) {
-          folderId = this.stateArg.folderId;
-        }
-
-        this.drive.insertFile(title, data, folderId, mxUtils.bind(this, function (file) {
-          complete();
-          this.fileCreated(file, libs, replace, done);
-        }), error);
-      }
-      else if (mode == App.MODE_GITHUB && this.gitHub != null) {
-        this.gitHub.insertFile(title, data, mxUtils.bind(this, function (file) {
-          complete();
-          this.fileCreated(file, libs, replace, done);
-        }), error, false, folderId);
-      }
-      else if (mode == App.MODE_TRELLO && this.trello != null) {
-        this.trello.insertFile(title, data, mxUtils.bind(this, function (file) {
-          complete();
-          this.fileCreated(file, libs, replace, done);
-        }), error, false, folderId);
-      }
-      else if (mode == App.MODE_DROPBOX && this.dropbox != null) {
-        this.dropbox.insertFile(title, data, mxUtils.bind(this, function (file) {
-          complete();
-          this.fileCreated(file, libs, replace, done);
-        }), error);
-      }
-      else if (mode == App.MODE_ONEDRIVE && this.oneDrive != null) {
-        this.oneDrive.insertFile(title, data, mxUtils.bind(this, function (file) {
-          complete();
-          this.fileCreated(file, libs, replace, done);
-        }), error, false, folderId);
-      }
-      else if (mode == App.MODE_BROWSER) {
-        complete();
-
-        var fn = mxUtils.bind(this, function () {
-          var file = new StorageFile(this, data, title);
-
-          // Inserts data into local storage
-          file.saveFile(title, false, mxUtils.bind(this, function () {
-            this.fileCreated(file, libs, replace, done);
-          }), error);
-        });
-
-        if (localStorage.getItem(title) == null) {
-          fn();
-        }
-        else {
-          this.confirm(mxResources.get('replaceIt', [title]), fn, mxUtils.bind(this, function () {
-            if (this.getCurrentFile() == null && this.dialog == null) {
-              this.showSplash();
-            }
-          }));
-        }
-      }
-      else {
-        complete();
-        this.fileCreated(new LocalFile(this, data, title, mode == null), libs, replace, done);
-      }
+      complete();
+      this.fileCreated(new LocalFile(this, data, title, mode == null), libs, replace, done);
     }
     catch (e) {
       complete();
@@ -4735,18 +4418,18 @@ App.prototype.updateUserElement = function () {
 
     var user = null;
 
-    if (this.drive != null && this.drive.getUser() != null) {
-      user = this.drive.getUser();
-    }
-    else if (this.oneDrive != null && this.oneDrive.getUser() != null) {
-      user = this.oneDrive.getUser();
-    }
-    else if (this.dropbox != null && this.dropbox.getUser() != null) {
-      user = this.dropbox.getUser();
-    }
-    else if (this.gitHub != null && this.gitHub.getUser() != null) {
-      user = this.gitHub.getUser();
-    }
+    // if (this.drive != null && this.drive.getUser() != null) {
+    //   user = this.drive.getUser();
+    // }
+    // else if (this.oneDrive != null && this.oneDrive.getUser() != null) {
+    //   user = this.oneDrive.getUser();
+    // }
+    // else if (this.dropbox != null && this.dropbox.getUser() != null) {
+    //   user = this.dropbox.getUser();
+    // }
+    // else if (this.gitHub != null && this.gitHub.getUser() != null) {
+    //   user = this.gitHub.getUser();
+    // }
     //TODO Trello no user issue
 
     if (user != null) {

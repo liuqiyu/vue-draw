@@ -10,6 +10,7 @@ import './Editor'
 import { App } from './App'
 import {DiagramPage} from './Pages'
 import { NewDialog } from './Dialogs'
+import {LocalFile} from './LocalFile'
 
 (function()
 {
@@ -1434,9 +1435,7 @@ import { NewDialog } from './Dialogs'
 	/**
 	 * 
 	 */
-	EditorUi.prototype.setFileData = function(data)
-	{
-    // debugger
+	EditorUi.prototype.setFileData = function(data){
 		data = this.validateFileData(data);
 		this.currentPage = null;
 		this.fileNode = null;
@@ -2183,7 +2182,6 @@ import { NewDialog } from './Dialogs'
 	 */
 	EditorUi.prototype.fileLoaded = function(file, noDialogs)
 	{
-    // debugger
 		var oldFile = this.getCurrentFile();
 		this.fileLoadedError = null;
 		this.setCurrentFile(null);
@@ -11511,7 +11509,7 @@ import { NewDialog } from './Dialogs'
 	 */
 	EditorUi.prototype.updateUi = function()
 	{
-		this.updateButtonContainer();
+		// this.updateButtonContainer();
 		this.updateActionStates();
 		
 		// Action states that only need update for new files
@@ -11697,8 +11695,7 @@ import { NewDialog } from './Dialogs'
 	 * Updates action states depending on the selection.
 	 */
 	var editorUiUpdateActionStates = EditorUi.prototype.updateActionStates;
-	EditorUi.prototype.updateActionStates = function()
-	{
+	EditorUi.prototype.updateActionStates = function(){
 		editorUiUpdateActionStates.apply(this, arguments);
 
 		var graph = this.editor.graph;

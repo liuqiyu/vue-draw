@@ -902,7 +902,6 @@ Graph.compress = function (data, deflate) {
  * Returns a decompressed version of the base64 encoded string.
  */
 Graph.decompress = function (data, inflate) {
-  // debugger
   if (data == null || data.length == 0 || typeof (pako) === 'undefined') {
     return data;
   }

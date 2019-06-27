@@ -1289,8 +1289,7 @@ import { App } from './App'
           editorUi.spinner.stop();
 
           if (url != null) {
-            var dlg = new EmbedDialog(editorUi, '<img src="' + ((current.constructor != DriveFile) ?
-              url : 'https://drive.google.com/uc?id=' + current.getId()) + '"/>');
+            var dlg = new EmbedDialog(editorUi, '<img src="' + url);
             editorUi.showDialog(dlg.container, 440, 240, true, true);
             dlg.init();
           }
@@ -1764,16 +1763,18 @@ import { App } from './App'
                 this.editorUi.handleError(resp, (resp != null) ? mxResources.get('errorRenamingFile') : null);
               }));
           }
-        }), (file.constructor == DriveFile || file.constructor == StorageFile) ?
-            mxResources.get('diagramName') : null, function (name) {
-              if (name != null && name.length > 0) {
-                return true;
-              }
+        }),
+          //  (file.constructor == StorageFile) ?
+          //     mxResources.get('diagramName') :
+          null, function (name) {
+            if (name != null && name.length > 0) {
+              return true;
+            }
 
-              editorUi.showError(mxResources.get('error'), mxResources.get('invalidName'), mxResources.get('ok'));
+            editorUi.showError(mxResources.get('error'), mxResources.get('invalidName'), mxResources.get('ok'));
 
-              return false;
-            }, null, null, null, null, editorUi.editor.fileExtensions);
+            return false;
+          }, null, null, null, null, editorUi.editor.fileExtensions);
         this.editorUi.showDialog(dlg.container, 340, 90, true, true);
         dlg.init();
       }
@@ -1790,51 +1791,7 @@ import { App } from './App'
 
       if (file != null) {
         var title = editorUi.getCopyFilename(file);
-
-        if (file.constructor == DriveFile) {
-          var dlg = new CreateDialog(editorUi, title, mxUtils.bind(this, function (newTitle, mode) {
-            // Mode is "download" if Create button is pressed, means use Google Drive
-            if (mode == 'download') {
-              mode = App.MODE_GOOGLE;
-            }
-
-            if (newTitle != null && newTitle.length > 0) {
-              if (mode == App.MODE_GOOGLE) {
-                if (editorUi.spinner.spin(document.body, mxResources.get('saving'))) {
-                  // Saveas does not update the file descriptor in Google Drive
-                  file.saveAs(newTitle, mxUtils.bind(this, function (resp) {
-                    // Replaces file descriptor in-place and saves
-                    file.desc = resp;
-
-                    // Makes sure the latest XML is in the file
-                    file.save(false, mxUtils.bind(this, function () {
-                      editorUi.spinner.stop();
-                      file.setModified(false);
-                      file.addAllSavedStatus();
-                    }), mxUtils.bind(this, function (resp) {
-                      editorUi.handleError(resp);
-                    }));
-                  }), mxUtils.bind(this, function (resp) {
-                    editorUi.handleError(resp);
-                  }));
-                }
-              }
-              else {
-                editorUi.createFile(newTitle, editorUi.getFileData(true), null, mode);
-              }
-            }
-          }), mxUtils.bind(this, function () {
-            editorUi.hideDialog();
-          }), mxResources.get('makeCopy'), mxResources.get('create'), null,
-            null, null, null, true, null, null, null, null,
-            editorUi.editor.fileExtensions);
-          editorUi.showDialog(dlg.container, 420, 380, true, true);
-          dlg.init();
-        }
-        else {
-          // Creates a copy with no predefined storage
-          editorUi.editor.editAsNew(this.editorUi.getFileData(true), title);
-        }
+        editorUi.editor.editAsNew(this.editorUi.getFileData(true), title);
       }
     }));
 
@@ -2517,62 +2474,42 @@ import { App } from './App'
       else {
         var file = this.editorUi.getCurrentFile();
 
-        if (file != null && file.constructor == DriveFile) {
-          if (file.isRestricted()) {
-            this.addMenuItems(menu, ['exportOptionsDisabled'], parent);
-          }
 
-          this.addMenuItems(menu, ['save', '-', 'share'], parent);
+        this.addMenuItems(menu, ['new'], parent);
 
-          var item = this.addMenuItem(menu, 'synchronize', parent);
-
-          if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
-            this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-          }
-
-          menu.addSeparator(parent);
-        }
-        else {
-          this.addMenuItems(menu, ['new'], parent);
-        }
 
         this.addSubmenu('openFrom', menu, parent);
 
         if (isLocalStorage) {
           this.addSubmenu('openRecent', menu, parent);
         }
+        if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+          file != null && file.constructor != LocalFile) {
+          menu.addSeparator(parent);
+          var item = this.addMenuItem(menu, 'synchronize', parent);
 
-        if (file != null && file.constructor == DriveFile) {
-          this.addMenuItems(menu, ['new', '-', 'rename', 'makeCopy', 'moveToFolder'], parent);
+          if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
+            this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
+          }
+        }
+
+        this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
+
+        this.addMenuItems(menu, ['-', 'rename'], parent);
+
+        if (editorUi.isOfflineApp()) {
+          if (navigator.onLine && urlParams['stealth'] != '1') {
+            this.addMenuItems(menu, ['upload'], parent);
+          }
         }
         else {
-          if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-            file != null && file.constructor != LocalFile) {
-            menu.addSeparator(parent);
-            var item = this.addMenuItem(menu, 'synchronize', parent);
+          this.addMenuItems(menu, ['makeCopy'], parent);
 
-            if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
-              this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-            }
-          }
-
-          this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
-
-          this.addMenuItems(menu, ['-', 'rename'], parent);
-
-          if (editorUi.isOfflineApp()) {
-            if (navigator.onLine && urlParams['stealth'] != '1') {
-              this.addMenuItems(menu, ['upload'], parent);
-            }
-          }
-          else {
-            this.addMenuItems(menu, ['makeCopy'], parent);
-
-            if (file != null && file.constructor == OneDriveFile) {
-              this.addMenuItems(menu, ['moveToFolder'], parent);
-            }
+          if (file != null && file.constructor == OneDriveFile) {
+            this.addMenuItems(menu, ['moveToFolder'], parent);
           }
         }
+
 
         menu.addSeparator(parent);
         this.addSubmenu('importFrom', menu, parent);

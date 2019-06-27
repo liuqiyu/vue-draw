@@ -7,6 +7,7 @@ import { Graph } from '@/grapheditor/js/Graph'
 import { Editor, OpenFile } from '@/grapheditor/js/Editor'
 import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { FilenameDialog } from '@/grapheditor/js/Dialogs'
+import './sidebar/Sidebar'
 import axios from "axios";
 export var StorageDialog = function (editorUi, fn, rowLimit) {
   rowLimit = (rowLimit != null) ? rowLimit : 2;

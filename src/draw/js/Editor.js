@@ -506,6 +506,7 @@ import { App } from './App'
 	 */
   var editorSetGraphXml = Editor.prototype.setGraphXml;
   Editor.prototype.setGraphXml = function (node) {
+    // debugger
     node = (node != null && node.nodeName != 'mxlibrary') ? this.extractGraphModel(node) : null;
 
     if (node != null) {
@@ -570,9 +571,9 @@ import { App } from './App'
 
         this.graph.setShadowVisible(node.getAttribute('shadow') == '1', false);
       }
-
       // Calls updateGraphComponents
-      editorSetGraphXml.apply(this, arguments);
+      // editorSetGraphXml.apply(this, arguments);
+      editorSetGraphXml.apply(this, [node]);
     }
     else {
       throw {

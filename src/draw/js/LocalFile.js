@@ -156,7 +156,6 @@ LocalFile.prototype.rename = function (title, success, error) {
  * @type mx.Point
  */
 LocalFile.prototype.open = function () {
-  // debugger
   this.ui.setFileData(this.getData());
   this.installListeners();
 };
