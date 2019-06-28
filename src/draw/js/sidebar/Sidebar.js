@@ -45,6 +45,8 @@ import './Sidebar-WebIcons.js'
 
 import { Sidebar } from '@/grapheditor/js/Sidebar'
 import { Graph } from '@/grapheditor/js/Graph'
+import { Dialog } from '@/grapheditor/js/Editor'
+import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { mxSettings } from '../Settings'
 (function () {
 	/**
@@ -63,7 +65,7 @@ import { mxSettings } from '../Settings'
 	/**
 	 * Overrides gear image URL.
 	 */
-  Sidebar.prototype.gearImage = GRAPH_IMAGE_PATH + '/clipart/Gear_128x128.png';
+  Sidebar.prototype.gearImage = STENCIL_PATH + '/clipart/Gear_128x128.png';
 
 	/**
 	 * Aliases for IDs in the libs parameter.
@@ -150,49 +152,61 @@ import { mxSettings } from '../Settings'
 	/**
 	 *
 	 */
-  Sidebar.prototype.configuration = [{ id: 'general', libs: ['general', 'misc', 'advanced'] }, { id: 'uml' }, { id: 'search' }, { id: 'er' },
-  { id: 'ios', prefix: 'ios', libs: [''/*prefix is library*/, '7icons', '7ui'] },
-  { id: 'android', prefix: 'android', libs: [''/*prefix is library*/] }, { id: 'aws3d' },
-  { id: 'flowchart' }, { id: 'basic' }, { id: 'infographic' }, { id: 'arrows' }, { id: 'arrows2' }, { id: 'lean_mapping' }, { id: 'citrix' }, { id: 'azure' }, { id: 'network' },
-  { id: 'sitemap' }, { id: 'dfd' },
-
-  { id: 'mscae', prefix: 'mscae', libs: ['Cloud', 'Enterprise', 'General', 'General Symbols', 'Intune', 'OMS', 'OpsManager', 'Other', 'System Center', 'Virtual Machine', 'Deprecated', 'Cloud Color', 'Deprecated Color'] },
-
-  { id: 'bpmn', prefix: 'bpmn', libs: [''/*prefix is library*/, 'Gateways', 'Events'] },
-  { id: 'clipart', prefix: null, libs: ['computer', 'finance', 'clipart', 'networking', 'people', 'telco'] },
-  { id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm },
-  { id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis },
-  { id: 'cumulus', libs: ['cumulus'] },
-  { id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip },
-  { id: 'mockups', prefix: 'mockup', libs: ['Buttons', 'Containers', 'Forms', 'Graphics', 'Markup', 'Misc', 'Navigation', 'Text'] },
-  {
-    id: 'pid2', prefix: 'pid2', libs: ['Agitators', 'Apparatus Elements', 'Centrifuges', 'Compressors', 'Compressors ISO', 'Crushers Grinding',
-      'Driers', 'Engines', 'Feeders', 'Filters', 'Fittings', 'Flow Sensors', 'Heat Exchangers', 'Instruments', 'Misc',
-      'Mixers', 'Piping', 'Pumps', 'Pumps DIN', 'Pumps ISO', 'Separators', 'Shaping Machines', 'Valves', 'Vessels']
-  },
-  { id: 'signs', prefix: 'signs', libs: Sidebar.prototype.signs },
-  { id: 'gcp', prefix: 'gcp', libs: Sidebar.prototype.gcp },
-  { id: 'gcp2', prefix: 'gcp2', libs: Sidebar.prototype.gcp2 },
-  { id: 'rack', prefix: 'rack', libs: Sidebar.prototype.rack },
-  { id: 'electrical', prefix: 'electrical', libs: Sidebar.prototype.electrical },
-  { id: 'aws2', prefix: 'aws2', libs: Sidebar.prototype.aws2 },
-  { id: 'aws3', prefix: 'aws3', libs: Sidebar.prototype.aws3 },
-  { id: 'aws4b', prefix: 'aws4b', libs: Sidebar.prototype.aws4b },
-  { id: 'aws4', prefix: 'aws4', libs: Sidebar.prototype.aws4 },
-  { id: 'pid', prefix: 'pid', libs: Sidebar.prototype.pids },
-  { id: 'cisco', prefix: 'cisco', libs: Sidebar.prototype.cisco },
-  { id: 'cisco_safe', prefix: 'cisco_safe', libs: Sidebar.prototype.cisco_safe },
-  { id: 'office', prefix: 'office', libs: Sidebar.prototype.office },
-  { id: 'veeam', prefix: 'veeam', libs: Sidebar.prototype.veeam },
-  { id: 'cabinets', libs: ['cabinets'] },
-  { id: 'floorplan', libs: ['floorplan'] },
-  { id: 'bootstrap', libs: ['bootstrap'] },
-  { id: 'atlassian', libs: ['atlassian'] },
-  { id: 'gmdl', prefix: 'gmdl', libs: Sidebar.prototype.gmdl },
-  { id: 'archimate3', prefix: 'archimate3', libs: Sidebar.prototype.archimate3 },
-  { id: 'archimate', libs: ['archimate'] },
-  { id: 'webicons', libs: ['webicons', 'weblogos'] },
-  { id: 'sysml', prefix: 'sysml', libs: Sidebar.prototype.sysml }];
+  Sidebar.prototype.configuration = [
+    { id: 'general', libs: ['general', 'misc', 'advanced'] },
+    { id: 'uml' },
+    { id: 'search' },
+    { id: 'er' },
+    { id: 'ios', prefix: 'ios', libs: [''/*prefix is library*/, '7icons', '7ui'] },
+    { id: 'android', prefix: 'android', libs: [''/*prefix is library*/] },
+    { id: 'aws3d' },
+    { id: 'flowchart' },
+    { id: 'basic' },
+    { id: 'infographic' },
+    { id: 'arrows' },
+    { id: 'arrows2' },
+    { id: 'lean_mapping' },
+    { id: 'citrix' },
+    { id: 'azure' },
+    { id: 'network' },
+    { id: 'sitemap' },
+    { id: 'dfd' },
+    { id: 'mscae', prefix: 'mscae', libs: ['Cloud', 'Enterprise', 'General', 'General Symbols', 'Intune', 'OMS', 'OpsManager', 'Other', 'System Center', 'Virtual Machine', 'Deprecated', 'Cloud Color', 'Deprecated Color'] },
+    { id: 'bpmn', prefix: 'bpmn', libs: [''/*prefix is library*/, 'Gateways', 'Events'] },
+    { id: 'clipart', prefix: null, libs: ['computer', 'finance', 'clipart', 'networking', 'people', 'telco'] },
+    { id: 'ibm', prefix: 'ibm', libs: Sidebar.prototype.ibm },
+    { id: 'allied_telesis', prefix: 'allied_telesis', libs: Sidebar.prototype.allied_telesis },
+    { id: 'cumulus', libs: ['cumulus'] },
+    { id: 'eip', prefix: 'eip', libs: Sidebar.prototype.eip },
+    { id: 'mockups', prefix: 'mockup', libs: ['Buttons', 'Containers', 'Forms', 'Graphics', 'Markup', 'Misc', 'Navigation', 'Text'] },
+    {
+      id: 'pid2', prefix: 'pid2', libs: ['Agitators', 'Apparatus Elements', 'Centrifuges', 'Compressors', 'Compressors ISO', 'Crushers Grinding',
+        'Driers', 'Engines', 'Feeders', 'Filters', 'Fittings', 'Flow Sensors', 'Heat Exchangers', 'Instruments', 'Misc',
+        'Mixers', 'Piping', 'Pumps', 'Pumps DIN', 'Pumps ISO', 'Separators', 'Shaping Machines', 'Valves', 'Vessels']
+    },
+    { id: 'signs', prefix: 'signs', libs: Sidebar.prototype.signs },
+    { id: 'gcp', prefix: 'gcp', libs: Sidebar.prototype.gcp },
+    { id: 'gcp2', prefix: 'gcp2', libs: Sidebar.prototype.gcp2 },
+    { id: 'rack', prefix: 'rack', libs: Sidebar.prototype.rack },
+    { id: 'electrical', prefix: 'electrical', libs: Sidebar.prototype.electrical },
+    { id: 'aws2', prefix: 'aws2', libs: Sidebar.prototype.aws2 },
+    { id: 'aws3', prefix: 'aws3', libs: Sidebar.prototype.aws3 },
+    { id: 'aws4b', prefix: 'aws4b', libs: Sidebar.prototype.aws4b },
+    { id: 'aws4', prefix: 'aws4', libs: Sidebar.prototype.aws4 },
+    { id: 'pid', prefix: 'pid', libs: Sidebar.prototype.pids },
+    { id: 'cisco', prefix: 'cisco', libs: Sidebar.prototype.cisco },
+    { id: 'cisco_safe', prefix: 'cisco_safe', libs: Sidebar.prototype.cisco_safe },
+    { id: 'office', prefix: 'office', libs: Sidebar.prototype.office },
+    { id: 'veeam', prefix: 'veeam', libs: Sidebar.prototype.veeam },
+    { id: 'cabinets', libs: ['cabinets'] },
+    { id: 'floorplan', libs: ['floorplan'] },
+    { id: 'bootstrap', libs: ['bootstrap'] },
+    { id: 'atlassian', libs: ['atlassian'] },
+    { id: 'gmdl', prefix: 'gmdl', libs: Sidebar.prototype.gmdl },
+    { id: 'archimate3', prefix: 'archimate3', libs: Sidebar.prototype.archimate3 },
+    { id: 'archimate', libs: ['archimate'] },
+    { id: 'webicons', libs: ['webicons', 'weblogos'] },
+    { id: 'sysml', prefix: 'sysml', libs: Sidebar.prototype.sysml }];
 
 	/**
 	 * Adds hint for quick tutorial video for certain search terms.
@@ -713,7 +727,7 @@ import { mxSettings } from '../Settings'
       mxLog.textarea.value = '';
     }
 
-    this.addSearchPalette(true);
+    // this.addSearchPalette(true);
 
     // Adds custom sections first
     if (this.customEntries != null) {

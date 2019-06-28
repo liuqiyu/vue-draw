@@ -4,9 +4,9 @@
 /**
  * Construcs a new sidebar for the given editor.
  */
-var STENCIL_PATH = '../stencils';
 import { Graph, HoverIcons } from './Graph'
 import { Editor, Dialog } from './Editor'
+
 
 export function Sidebar (editorUi, container) {
   this.editorUi = editorUi;
@@ -73,7 +73,7 @@ export function Sidebar (editorUi, container) {
 Sidebar.prototype.init = function () {
   var dir = STENCIL_PATH;
 
-  this.addSearchPalette(true);
+  // this.addSearchPalette(true);
   this.addGeneralPalette(true);
   this.addMiscPalette(false);
   this.addAdvancedPalette(false);
@@ -146,7 +146,6 @@ Sidebar.prototype.dropTargetDelay = 200;
  * Specifies the URL of the gear image.
  */
 Sidebar.prototype.gearImage = STENCIL_PATH + '/clipart/Gear_128x128.png';
-
 /**
  * Specifies the width of the thumbnails.
  */
@@ -2866,7 +2865,7 @@ Sidebar.prototype.addClickHandler = function (elt, ds, cells) {
  */
 Sidebar.prototype.createVertexTemplateEntry = function (style, width, height, value, title, showLabel, showTitle, tags) {
   tags = (tags != null && tags.length > 0) ? tags : title.toLowerCase();
-
+  // console.log(style)
   return this.addEntry(tags, mxUtils.bind(this, function () {
     return this.createVertexTemplate(style, width, height, value, title, showLabel, showTitle);
   }));
@@ -2878,6 +2877,7 @@ Sidebar.prototype.createVertexTemplateEntry = function (style, width, height, va
 Sidebar.prototype.createVertexTemplate = function (style, width, height, value, title, showLabel, showTitle, allowCellsInserted) {
   var cells = [new mxCell((value != null) ? value : '', new mxGeometry(0, 0, width, height), style)];
   cells[0].vertex = true;
+  // debugger
 
   return this.createVertexTemplateFromCells(cells, width, height, title, showLabel, showTitle, allowCellsInserted);
 };
@@ -3081,9 +3081,13 @@ Sidebar.prototype.addImagePalette = function (id, title, prefix, postfix, items,
         var dot = item.lastIndexOf('.');
         tmpTags = item.substring((slash >= 0) ? slash + 1 : 0, (dot >= 0) ? dot : item.length).replace(/[-_]/g, ' ');
       }
-
-      fns.push(this.createVertexTemplateEntry('image;html=1;labelBackgroundColor=#ffffff;image=' + prefix + item + postfix,
-        this.defaultImageWidth, this.defaultImageHeight, '', title, title != null, null, this.filterTags(tmpTags)));
+      // debugger
+      let imgUrl = 'https://www.draw.io/' + prefix + item + postfix;
+      let style = 'shape=image;html=1;labelBackgroundColor=#ffffff;image=' + imgUrl;
+      fns.push(
+        this.createVertexTemplateEntry(style,
+          this.defaultImageWidth, this.defaultImageHeight, '', title, title != null, null, this.filterTags(tmpTags))
+      );
     }))(items[i], (titles != null) ? titles[i] : null, (tags != null) ? tags[items[i]] : null);
   }
 

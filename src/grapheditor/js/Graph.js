@@ -5,7 +5,6 @@
 // see https://code.google.com/p/google-caja/issues/detail?can=2&q=&colspec=ID%20Type%20Status%20Priority%20Owner%20Summary&groupby=&sort=&id=1296
 
 import '../sanitizer/sanitizer.min.js'
-var STENCIL_PATH = '../stencils';
 if (typeof html4 !== 'undefined') {
   html4.ATTRIBS["a::target"] = 0;
   html4.ATTRIBS["source::src"] = 0;
@@ -1903,7 +1902,7 @@ Graph.prototype.replacePlaceholders = function (cell, str) {
 
   if (str != null) {
     var last = 0;
-
+    var match;
     while (match = this.placeholderPattern.exec(str)) {
       var val = match[0];
 

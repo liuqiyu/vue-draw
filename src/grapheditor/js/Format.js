@@ -3159,7 +3159,7 @@ TextFormatPanel.prototype.addFont = function (container) {
 
               for (var i = 0; i < elts.length; i++) {
                 if (selection.containsNode(elts[i], true)) {
-                  temp = mxUtils.getCurrentStyle(elts[i]);
+                  var temp = mxUtils.getCurrentStyle(elts[i]);
                   fontSize = Math.max(getAbsoluteFontSize(temp), fontSize);
                   var lh = getRelativeLineHeight(fontSize, temp, elts[i]);
 
