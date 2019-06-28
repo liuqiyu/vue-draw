@@ -5,6 +5,7 @@
 /**
  * Registers shapes.
  */
+import {Graph} from './Graph'
 (function()
 {
 	// Cube Shape, supports size style

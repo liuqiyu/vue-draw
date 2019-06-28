@@ -100,7 +100,7 @@
     <script>
       mxBasePath = './src'
 
-      var isLocalStorage = false
+      var isLocalStorage = true
 
       try {
         isLocalStorage =
@@ -361,39 +361,6 @@
           }
         }
       })()
-
-      // Enables offline mode
-      if (
-        urlParams['offline'] == '1' ||
-        urlParams['demo'] == '1' ||
-        urlParams['stealth'] == '1' ||
-        urlParams['local'] == '1'
-      ) {
-        urlParams['picker'] = '0'
-        urlParams['gapi'] = '0'
-        urlParams['db'] = '0'
-        urlParams['od'] = '0'
-        urlParams['gh'] = '0'
-        urlParams['tr'] = '0'
-      }
-
-      // Disables math in offline mode
-      if (urlParams['offline'] == '1' || urlParams['local'] == '1') {
-        urlParams['math'] = '0'
-      }
-
-      // Lightbox enables chromeless mode
-      if (urlParams['lightbox'] == '1') {
-        urlParams['chrome'] = '0'
-      }
-
-      // Fallback for cases where the hash property is not available
-      if (
-        (window.location.hash == null || window.location.hash.length <= 1) &&
-        urlParams['open'] != null
-      ) {
-        window.location.hash = urlParams['open']
-      }
     </script>
     <script src="./src/js/mxClient.js"></script>
     <script src="./deflate/base64.js"></script>
