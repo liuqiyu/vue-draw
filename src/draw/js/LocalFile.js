@@ -88,7 +88,7 @@ LocalFile.prototype.saveAs = function (title, success, error) {
  */
 LocalFile.prototype.saveFile = function (title, revision, success, error) {
   this.title = title;
-
+  debugger
   // Updates data after changing file name
   this.updateFileData();
   var data = this.getData();

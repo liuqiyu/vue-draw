@@ -10,7 +10,7 @@ import { Sidebar } from './Sidebar'
 import { Graph, HoverIcons } from './Graph'
 import { Format } from './Format'
 import { Toolbar } from './Toolbar'
-import { ColorDialog, OpenDialog } from './Dialogs'
+import { ColorDialog, OpenDialog, EditDataDialog, FilenameDialog, LinkDialog } from './Dialogs'
 import { Editor, Dialog, OpenFile } from './Editor'
 mxCellEditor.prototype.isContentEditing = function () {
   var state = this.graph.view.getState(this.editingCell);

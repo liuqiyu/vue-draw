@@ -2262,42 +2262,7 @@ App.prototype.saveLibrary = function (name, images, file, mode, noSpin, noReload
 
     if (file == null) {
       this.pickFolder(mode, mxUtils.bind(this, function (folderId) {
-        if (mode == App.MODE_GOOGLE && this.drive != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
-          this.drive.insertFile(name, xml, folderId, mxUtils.bind(this, function (newFile) {
-            this.spinner.stop();
-            this.hideDialog(true);
-            this.libraryLoaded(newFile, images);
-          }), error, this.drive.libraryMimeType);
-        }
-        else if (mode == App.MODE_GITHUB && this.gitHub != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
-          this.gitHub.insertLibrary(name, xml, mxUtils.bind(this, function (newFile) {
-            this.spinner.stop();
-            this.hideDialog(true);
-            this.libraryLoaded(newFile, images);
-          }), error, folderId);
-        }
-        else if (mode == App.MODE_TRELLO && this.trello != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
-          this.trello.insertLibrary(name, xml, mxUtils.bind(this, function (newFile) {
-            this.spinner.stop();
-            this.hideDialog(true);
-            this.libraryLoaded(newFile, images);
-          }), error, folderId);
-        }
-        else if (mode == App.MODE_DROPBOX && this.dropbox != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
-          this.dropbox.insertLibrary(name, xml, mxUtils.bind(this, function (newFile) {
-            this.spinner.stop();
-            this.hideDialog(true);
-            this.libraryLoaded(newFile, images);
-          }), error, folderId);
-        }
-        else if (mode == App.MODE_ONEDRIVE && this.oneDrive != null && this.spinner.spin(document.body, mxResources.get('inserting'))) {
-          this.oneDrive.insertLibrary(name, xml, mxUtils.bind(this, function (newFile) {
-            this.spinner.stop();
-            this.hideDialog(true);
-            this.libraryLoaded(newFile, images);
-          }), error, folderId);
-        }
-        else if (mode == App.MODE_BROWSER) {
+        if (mode == App.MODE_BROWSER) {
           var fn = mxUtils.bind(this, function () {
             var file = new StorageLibrary(this, xml, name);
 

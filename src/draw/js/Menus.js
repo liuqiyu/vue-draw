@@ -7,9 +7,13 @@ import { Action } from '@/grapheditor/js/Actions'
 import { Editor } from '@/grapheditor/js/Editor'
 import { DrawioFile } from './DrawioFile'
 import { EditorUi, ChangePageSetup } from '@/grapheditor/js/EditorUi'
+import { FilenameDialog, TextareaDialog } from '@/grapheditor/js/Dialogs'
+import {
+  NewDialog, MoreShapesDialog, BackgroundImageDialog, FindWindow, CustomDialog,
+  EmbedDialog, EditGeometryDialog
+} from './Dialogs'
 import './Editor'
-import { NewDialog, MoreShapesDialog, BackgroundImageDialog, FindWindow } from './Dialogs'
-import { FilenameDialog } from '@/grapheditor/js/Dialogs'
+import { LocalFile } from './LocalFile'
 import { App } from './App'
 import { mxSettings } from './Settings'
 (function () {
@@ -262,7 +266,7 @@ import { mxSettings } from './Settings'
           mxResources.get('cancel'), mxResources.get('discardChanges'));
       }
       else {
-        fn();
+        fn(); c
       }
     });
 
@@ -1800,28 +1804,7 @@ import { mxSettings } from './Settings'
     editorUi.actions.addAction('moveToFolder...', mxUtils.bind(this, function () {
       var file = editorUi.getCurrentFile();
 
-      if (file.getMode() == App.MODE_GOOGLE || file.getMode() == App.MODE_ONEDRIVE) {
-        var isInRoot = false;
 
-        if (file.getMode() == App.MODE_GOOGLE && file.desc.parents != null) {
-          for (var i = 0; i < file.desc.parents.length; i++) {
-            if (file.desc.parents[i].isRoot) {
-              isInRoot = true;
-              break;
-            }
-          }
-        }
-
-        editorUi.pickFolder(file.getMode(), mxUtils.bind(this, function (folderId) {
-          if (editorUi.spinner.spin(document.body, mxResources.get('moving'))) {
-            file.move(folderId, mxUtils.bind(this, function (resp) {
-              editorUi.spinner.stop();
-            }), mxUtils.bind(this, function (resp) {
-              editorUi.handleError(resp);
-            }));
-          }
-        }), null, true, isInRoot);
-      }
     }));
 
     this.put('publish', new Menu(mxUtils.bind(this, function (menu, parent) {
@@ -1992,14 +1975,6 @@ import { mxSettings } from './Settings'
           (function (entry) {
             var modeKey = entry.mode;
 
-            // Google and oneDrive use different keys
-            if (modeKey == App.MODE_GOOGLE) {
-              modeKey = 'googleDrive';
-            }
-            else if (modeKey == App.MODE_ONEDRIVE) {
-              modeKey = 'oneDrive';
-            }
-
             menu.addItem(entry.title + ' (' + mxResources.get(modeKey) + ')', null, function () {
               editorUi.loadFile(entry.id);
             }, parent);
@@ -2015,70 +1990,10 @@ import { mxSettings } from './Settings'
     }));
 
     this.put('openFrom', new Menu(function (menu, parent) {
-      if (editorUi.drive != null) {
-        menu.addItem(mxResources.get('googleDrive') + '...', null, function () {
-          editorUi.pickFile(App.MODE_GOOGLE);
-        }, parent);
-      }
-      else if (googleEnabled && typeof window.DriveClient === 'function') {
-        menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function () {
-          // do nothing
-        }, parent, null, false);
-      }
-
-      if (editorUi.oneDrive != null) {
-        menu.addItem(mxResources.get('oneDrive') + '...', null, function () {
-          editorUi.pickFile(App.MODE_ONEDRIVE);
-        }, parent);
-      }
-      else if (oneDriveEnabled && typeof window.OneDriveClient === 'function') {
-        menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function () {
-          // do nothing
-        }, parent, null, false);
-      }
-
-      if (editorUi.dropbox != null) {
-        menu.addItem(mxResources.get('dropbox') + '...', null, function () {
-          editorUi.pickFile(App.MODE_DROPBOX);
-        }, parent);
-      }
-      else if (dropboxEnabled && typeof window.DropboxClient === 'function') {
-        menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function () {
-          // do nothing
-        }, parent, null, false);
-      }
-
-      if (editorUi.gitHub != null) {
-        menu.addItem(mxResources.get('github') + '...', null, function () {
-          editorUi.pickFile(App.MODE_GITHUB);
-        }, parent);
-      }
-
-      if (editorUi.trello != null) {
-        menu.addItem(mxResources.get('trello') + '...', null, function () {
-          editorUi.pickFile(App.MODE_TRELLO);
-        }, parent);
-      }
-      else if (trelloEnabled && typeof window.TrelloClient === 'function') {
-        menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function () {
-          // do nothing
-        }, parent, null, false);
-      }
-
       menu.addSeparator(parent);
-
-      if (isLocalStorage && urlParams['browser'] != '0') {
-        menu.addItem(mxResources.get('browser') + '...', null, function () {
-          editorUi.pickFile(App.MODE_BROWSER);
-        }, parent);
-      }
-
-      //if (!mxClient.IS_IOS)
-      {
-        menu.addItem(mxResources.get('device') + '...', null, function () {
-          editorUi.pickFile(App.MODE_DEVICE);
-        }, parent);
-      }
+      menu.addItem(mxResources.get('device') + '...', null, function () {
+        editorUi.pickFile(App.MODE_DEVICE);
+      }, parent);
 
       if (!editorUi.isOffline()) {
         menu.addSeparator(parent);
@@ -2116,46 +2031,6 @@ import { mxSettings } from './Settings'
             }, parent, null, false);
           }
         }
-
-        if (editorUi.oneDrive != null) {
-          menu.addItem(mxResources.get('oneDrive') + '...', null, function () {
-            editorUi.showLibraryDialog(null, null, null, null, App.MODE_ONEDRIVE);
-          }, parent);
-        }
-        else if (oneDriveEnabled && typeof window.OneDriveClient === 'function') {
-          menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
-        if (editorUi.dropbox != null) {
-          menu.addItem(mxResources.get('dropbox') + '...', null, function () {
-            editorUi.showLibraryDialog(null, null, null, null, App.MODE_DROPBOX);
-          }, parent);
-        }
-        else if (dropboxEnabled && typeof window.DropboxClient === 'function') {
-          menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
-        if (editorUi.gitHub != null) {
-          menu.addItem(mxResources.get('github') + '...', null, function () {
-            editorUi.showLibraryDialog(null, null, null, null, App.MODE_GITHUB);
-          }, parent);
-        }
-
-        if (editorUi.trello != null) {
-          menu.addItem(mxResources.get('trello') + '...', null, function () {
-            editorUi.showLibraryDialog(null, null, null, null, App.MODE_TRELLO);
-          }, parent);
-        }
-        else if (trelloEnabled && typeof window.TrelloClient === 'function') {
-          menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
         menu.addSeparator(parent);
 
         if (isLocalStorage && urlParams['browser'] != '0') {
@@ -2173,58 +2048,6 @@ import { mxSettings } from './Settings'
       }));
 
       this.put('openLibraryFrom', new Menu(function (menu, parent) {
-        if (typeof (google) != 'undefined' && typeof (google.picker) != 'undefined') {
-          if (editorUi.drive != null) {
-            menu.addItem(mxResources.get('googleDrive') + '...', null, function () {
-              editorUi.pickLibrary(App.MODE_GOOGLE);
-            }, parent);
-          }
-          else if (googleEnabled && typeof window.DriveClient === 'function') {
-            menu.addItem(mxResources.get('googleDrive') + ' (' + mxResources.get('loading') + '...)', null, function () {
-              // do nothing
-            }, parent, null, false);
-          }
-        }
-
-        if (editorUi.oneDrive != null) {
-          menu.addItem(mxResources.get('oneDrive') + '...', null, function () {
-            editorUi.pickLibrary(App.MODE_ONEDRIVE);
-          }, parent);
-        }
-        else if (oneDriveEnabled && typeof window.OneDriveClient === 'function') {
-          menu.addItem(mxResources.get('oneDrive') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
-        if (editorUi.dropbox != null) {
-          menu.addItem(mxResources.get('dropbox') + '...', null, function () {
-            editorUi.pickLibrary(App.MODE_DROPBOX);
-          }, parent);
-        }
-        else if (dropboxEnabled && typeof window.DropboxClient === 'function') {
-          menu.addItem(mxResources.get('dropbox') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
-        if (editorUi.gitHub != null) {
-          menu.addItem(mxResources.get('github') + '...', null, function () {
-            editorUi.pickLibrary(App.MODE_GITHUB);
-          }, parent);
-        }
-
-        if (editorUi.trello != null) {
-          menu.addItem(mxResources.get('trello') + '...', null, function () {
-            editorUi.pickLibrary(App.MODE_TRELLO);
-          }, parent);
-        }
-        else if (trelloEnabled && typeof window.TrelloClient === 'function') {
-          menu.addItem(mxResources.get('trello') + ' (' + mxResources.get('loading') + '...)', null, function () {
-            // do nothing
-          }, parent, null, false);
-        }
-
         menu.addSeparator(parent);
 
         if (isLocalStorage && urlParams['browser'] != '0') {
@@ -2427,7 +2250,6 @@ import { mxSettings } from './Settings'
                   { url: '123', title: 'Test 2', imgUrl: 'https://www.google.com.eg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png' },
                   { url: '123', title: 'Test 3', changedBy: 'Ashraf Teleb', lastModifiedOn: 'Yesterday' }
                 ]);
-                console.log(username);
               }, 1000);
             }, function (str, callback, username) {
               setTimeout(function () {
@@ -2453,89 +2275,85 @@ import { mxSettings } from './Settings'
       }
     })));
 
-    // this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
-    //   if (urlParams['embed'] == '1') {
-    //     this.addSubmenu('importFrom', menu, parent);
-    //     this.addSubmenu('exportAs', menu, parent);
-    //     this.addSubmenu('embed', menu, parent);
+    this.put('file', new Menu(mxUtils.bind(this, function (menu, parent) {
+      if (urlParams['embed'] == '1') {
+        this.addSubmenu('importFrom', menu, parent);
+        this.addSubmenu('exportAs', menu, parent);
+        this.addSubmenu('embed', menu, parent);
 
-    //     if (urlParams['libraries'] == '1') {
-    //       this.addMenuItems(menu, ['-'], parent);
-    //       this.addSubmenu('newLibrary', menu, parent);
-    //       this.addSubmenu('openLibraryFrom', menu, parent);
-    //     }
+        if (urlParams['libraries'] == '1') {
+          this.addMenuItems(menu, ['-'], parent);
+          this.addSubmenu('newLibrary', menu, parent);
+          this.addSubmenu('openLibraryFrom', menu, parent);
+        }
 
-    //     this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename', 'save'], parent);
+        this.addMenuItems(menu, ['-', 'pageSetup', 'print', '-', 'rename', 'save'], parent);
 
-    //     if (urlParams['saveAndExit'] == '1') {
-    //       this.addMenuItems(menu, ['saveAndExit'], parent);
-    //     }
+        if (urlParams['saveAndExit'] == '1') {
+          this.addMenuItems(menu, ['saveAndExit'], parent);
+        }
 
-    //     this.addMenuItems(menu, ['exit'], parent);
-    //   }
-    //   else {
-    //     var file = this.editorUi.getCurrentFile();
-
-
-    //     this.addMenuItems(menu, ['new'], parent);
+        this.addMenuItems(menu, ['exit'], parent);
+      }
+      else {
+        var file = this.editorUi.getCurrentFile();
 
 
-    //     this.addSubmenu('openFrom', menu, parent);
-
-    //     if (isLocalStorage) {
-    //       this.addSubmenu('openRecent', menu, parent);
-    //     }
-    //     if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-    //       file != null && file.constructor != LocalFile) {
-    //       menu.addSeparator(parent);
-    //       var item = this.addMenuItem(menu, 'synchronize', parent);
-
-    //       if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
-    //         this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
-    //       }
-    //     }
-
-    //     this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
-
-    //     this.addMenuItems(menu, ['-', 'rename'], parent);
-
-    //     if (editorUi.isOfflineApp()) {
-    //       if (navigator.onLine && urlParams['stealth'] != '1') {
-    //         this.addMenuItems(menu, ['upload'], parent);
-    //       }
-    //     }
-    //     else {
-    //       this.addMenuItems(menu, ['makeCopy'], parent);
-
-    //       if (file != null && file.constructor == OneDriveFile) {
-    //         this.addMenuItems(menu, ['moveToFolder'], parent);
-    //       }
-    //     }
+        this.addMenuItems(menu, ['new'], parent);
 
 
-    //     menu.addSeparator(parent);
-    //     this.addSubmenu('importFrom', menu, parent);
-    //     this.addSubmenu('exportAs', menu, parent);
-    //     menu.addSeparator(parent);
-    //     this.addSubmenu('embed', menu, parent);
-    //     this.addSubmenu('publish', menu, parent);
-    //     menu.addSeparator(parent);
-    //     this.addSubmenu('newLibrary', menu, parent);
-    //     this.addSubmenu('openLibraryFrom', menu, parent);
+        this.addSubmenu('openFrom', menu, parent);
 
-    //     if (file != null && file.isRevisionHistorySupported()) {
-    //       this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
-    //     }
+        if (isLocalStorage) {
+          this.addSubmenu('openRecent', menu, parent);
+        }
+        if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+          file != null && file.constructor != LocalFile) {
+          menu.addSeparator(parent);
+          var item = this.addMenuItem(menu, 'synchronize', parent);
 
-    //     this.addMenuItems(menu, ['-', 'pageSetup'], parent);
+          if (!editorUi.isOffline() || mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) {
+            this.addLinkToItem(item, 'https://desk.draw.io/support/solutions/articles/16000087947');
+          }
+        }
 
-    //     // Cannot use print in standalone mode on iOS as we cannot open new windows
-    //     if (!mxClient.IS_IOS || !navigator.standalone) {
-    //       this.addMenuItems(menu, ['print'], parent);
-    //     }
+        this.addMenuItems(menu, ['-', 'save', 'saveAs'], parent);
 
-    //     this.addMenuItems(menu, ['-', 'close']);
-    //   }
-    // })));
+        this.addMenuItems(menu, ['-', 'rename'], parent);
+
+        if (editorUi.isOfflineApp()) {
+          if (navigator.onLine && urlParams['stealth'] != '1') {
+            this.addMenuItems(menu, ['upload'], parent);
+          }
+        }
+        else {
+          this.addMenuItems(menu, ['makeCopy'], parent);
+        }
+
+
+        menu.addSeparator(parent);
+        this.addSubmenu('importFrom', menu, parent);
+        this.addSubmenu('exportAs', menu, parent);
+        menu.addSeparator(parent);
+        this.addSubmenu('embed', menu, parent);
+        this.addSubmenu('publish', menu, parent);
+        menu.addSeparator(parent);
+        this.addSubmenu('newLibrary', menu, parent);
+        this.addSubmenu('openLibraryFrom', menu, parent);
+
+        if (file != null && file.isRevisionHistorySupported()) {
+          this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
+        }
+
+        this.addMenuItems(menu, ['-', 'pageSetup'], parent);
+
+        // Cannot use print in standalone mode on iOS as we cannot open new windows
+        if (!mxClient.IS_IOS || !navigator.standalone) {
+          this.addMenuItems(menu, ['print'], parent);
+        }
+
+        this.addMenuItems(menu, ['-', 'close']);
+      }
+    })));
   };
 })();

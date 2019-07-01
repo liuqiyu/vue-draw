@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxMockupContainers.js,v 1.10 2013/07/09 11:19:51 mate Exp $
  * Copyright (c) 2006-2010, JGraph Ltd

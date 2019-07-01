@@ -5,13 +5,13 @@
 import { EditorUi,ChangePageSetup } from '@/grapheditor/js/EditorUi'
 import { Graph } from '@/grapheditor/js/Graph'
 import {Editor,OpenFile,Dialog} from '@/grapheditor/js/Editor'
-import { OpenDialog } from '@/grapheditor/js/Dialogs'
+import { OpenDialog,EditDataDialog ,TextareaDialog,FilenameDialog} from '@/grapheditor/js/Dialogs'
 import {Sidebar} from '@/grapheditor/js/Sidebar'
 import { Format,BaseFormatPanel ,StyleFormatPanel} from '@/grapheditor/js/Format'
 import {ErrorDialog} from './Editor'
 import { App } from './App'
 import {DiagramPage} from './Pages'
-import { NewDialog,BackgroundImageDialog } from './Dialogs'
+import { NewDialog,BackgroundImageDialog,CustomDialog,LibraryDialog,ImageDialog ,CreateDialog,LinkDialog} from './Dialogs'
 import {LocalFile} from './LocalFile'
 
 (function()
@@ -11577,7 +11577,7 @@ import {LocalFile} from './LocalFile'
 		
 		if (this.isAppCache())
 		{
-			var appCache = applicationCache;
+			var appCache = window.applicationCache;
 			
 			// NOTE: HTML5 Cache is deprecated
 			if (appCache != null && this.offlineStatus == null)

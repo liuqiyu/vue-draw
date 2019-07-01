@@ -8,6 +8,7 @@
 import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { Editor } from '@/grapheditor/js/Editor'
 import { Sidebar } from '@/grapheditor/js/Sidebar'
+
 export var mxSettings =
 {
 	/**

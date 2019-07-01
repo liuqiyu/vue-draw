@@ -6,6 +6,7 @@
  */
 import { EditorUi } from './EditorUi'
 import { Menus } from '@/grapheditor/js/Menus'
+import { FilenameDialog } from './Dialogs'
 
 export function Toolbar (editorUi, container) {
   this.editorUi = editorUi;

@@ -4,3 +4,5 @@ src/grapheditor/js/*.js
 src/grapheditor/*/*.js
 src/draw/js/*/*.js
 src/draw/js/*.js
+src/draw/shapes/*.js
+src/draw/shapes/*/*.js

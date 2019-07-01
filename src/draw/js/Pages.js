@@ -16,6 +16,8 @@
 import { EditorUi, ChangePageSetup } from '@/grapheditor/js/EditorUi'
 import { Graph } from '@/grapheditor/js/Graph'
 import { Editor } from '@/grapheditor/js/Editor'
+import { FilenameDialog } from '@/grapheditor/js/Dialogs'
+import { mxSettings } from './Settings'
 export function DiagramPage (node) {
   this.node = node;
 

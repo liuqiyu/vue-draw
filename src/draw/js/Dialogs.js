@@ -4,7 +4,7 @@
  */
 import { App } from './App'
 import { Graph } from '@/grapheditor/js/Graph'
-import { Editor, OpenFile } from '@/grapheditor/js/Editor'
+import { Editor, OpenFile, Dialog } from '@/grapheditor/js/Editor'
 import { EditorUi } from '@/grapheditor/js/EditorUi'
 import { FilenameDialog } from '@/grapheditor/js/Dialogs'
 import './sidebar/Sidebar'
@@ -166,30 +166,8 @@ export var StorageDialog = function (editorUi, fn, rowLimit) {
 
     function initButton () {
       mxEvent.addListener(button, 'click', (clientFn != null) ? clientFn : function () {
-        // Special case: Redirect all drive users to draw.io pro
-        if (mode == App.MODE_GOOGLE && !editorUi.isDriveDomain()) {
-          window.location.hostname = DriveClient.prototype.newAppHostname;
-        }
-        else if (mode == App.MODE_GOOGLE && editorUi.spinner.spin(document.body, mxResources.get('authorizing'))) {
-          // Tries immediate authentication
-          editorUi.drive.checkToken(mxUtils.bind(this, function () {
-            editorUi.spinner.stop();
-            editorUi.setMode(mode, cb.checked);
-            fn();
-          }));
-        }
-        else if (mode == App.MODE_ONEDRIVE && editorUi.spinner.spin(document.body, mxResources.get('authorizing'))) {
-          // Tries immediate authentication
-          editorUi.oneDrive.checkToken(mxUtils.bind(this, function () {
-            editorUi.spinner.stop();
-            editorUi.setMode(mode, cb.checked);
-            fn();
-          }));
-        }
-        else {
-          editorUi.setMode(mode, cb.checked);
-          fn();
-        }
+        editorUi.setMode(mode, cb.checked);
+        fn();
       });
     };
 
@@ -259,14 +237,6 @@ export var StorageDialog = function (editorUi, fn, rowLimit) {
   mxUtils.write(hd, mxResources.get('saveDiagramsTo') + ':');
   div.appendChild(hd);
 
-  if (typeof window.DriveClient === 'function') {
-    addLogo('/google-drive-logo.svg', mxResources.get('googleDrive'), App.MODE_GOOGLE, 'drive');
-  }
-
-  if (typeof window.OneDriveClient === 'function') {
-    addLogo('/onedrive-logo.svg', mxResources.get('oneDrive'), App.MODE_ONEDRIVE, 'oneDrive');
-  }
-
   addLogo('/osa_drive-harddisk.png', mxResources.get('device'), App.MODE_DEVICE);
 
   if (isLocalStorage && (urlParams['browser'] == '1' || urlParams['offline'] == '1')) {
@@ -304,15 +274,6 @@ export var StorageDialog = function (editorUi, fn, rowLimit) {
     for (var i = 0; i < recent.length; i++) {
       (function (entry) {
         var modeKey = entry.mode;
-
-        // Google and oneDrive use different keys
-        if (modeKey == App.MODE_GOOGLE) {
-          modeKey = 'googleDrive';
-        }
-        else if (modeKey == App.MODE_ONEDRIVE) {
-          modeKey = 'oneDrive';
-        }
-
         var entryOption = document.createElement('option');
         entryOption.setAttribute('value', entry.id);
         mxUtils.write(entryOption, entry.title + ' (' + mxResources.get(modeKey) + ')');
@@ -517,22 +478,7 @@ export var SplashDialog = function (editorUi) {
 
   var storage = 'undefined';
 
-  if (editorUi.mode == App.MODE_GOOGLE) {
-    storage = mxResources.get('googleDrive');
-  }
-  else if (editorUi.mode == App.MODE_DROPBOX) {
-    storage = mxResources.get('dropbox');
-  }
-  else if (editorUi.mode == App.MODE_ONEDRIVE) {
-    storage = mxResources.get('oneDrive');
-  }
-  else if (editorUi.mode == App.MODE_GITHUB) {
-    storage = mxResources.get('github');
-  }
-  else if (editorUi.mode == App.MODE_TRELLO) {
-    storage = mxResources.get('trello');
-  }
-  else if (editorUi.mode == App.MODE_DEVICE) {
+  if (editorUi.mode == App.MODE_DEVICE) {
     storage = mxResources.get('device');
   }
   else if (editorUi.mode == App.MODE_BROWSER) {
@@ -563,70 +509,6 @@ export var SplashDialog = function (editorUi) {
 
       buttons.appendChild(link);
     };
-
-    if (editorUi.mode == App.MODE_GOOGLE && driveUser != null) {
-      btn.style.marginBottom = '24px';
-
-      var link = document.createElement('a');
-      link.setAttribute('href', 'javascript:void(0)');
-      link.style.display = 'inline-block';
-      link.style.marginTop = '6px';
-      mxUtils.write(link, mxResources.get('changeUser') + ' (' + driveUser.displayName + ')');
-
-      // Makes room after last big buttons
-      btn.style.marginBottom = '16px';
-      buttons.style.paddingBottom = '18px';
-
-      mxEvent.addListener(link, 'click', function () {
-        editorUi.hideDialog();
-        editorUi.drive.clearUserId();
-        editorUi.drive.setUser(null);
-        gapi.auth.signOut();
-
-        // Restores current dialog after clearing user
-        editorUi.setMode(App.MODE_GOOGLE);
-        editorUi.hideDialog();
-        editorUi.showSplash();
-
-        // FIXME: Does not force showing the auth dialog if only one user is logged in
-        editorUi.drive.authorize(false, mxUtils.bind(this, mxUtils.bind(this, function () {
-          editorUi.hideDialog();
-          editorUi.showSplash();
-        })), mxUtils.bind(this, function (resp) {
-          editorUi.handleError(resp, null, function () {
-            editorUi.hideDialog();
-            editorUi.showSplash();
-          });
-        }));
-      });
-
-      buttons.appendChild(link);
-    }
-    else if (editorUi.mode == App.MODE_ONEDRIVE && editorUi.oneDrive != null) {
-      addLogout(function () {
-        editorUi.oneDrive.logout();
-      });
-    }
-    else if (editorUi.mode == App.MODE_GITHUB && editorUi.gitHub != null) {
-      addLogout(function () {
-        editorUi.gitHub.logout();
-        editorUi.openLink('https://www.github.com/logout');
-      });
-    }
-    else if (editorUi.mode == App.MODE_TRELLO && editorUi.trello != null) {
-      if (editorUi.trello.isAuthorized()) {
-        addLogout(function () {
-          editorUi.trello.logout();
-        });
-      }
-    }
-    else if (editorUi.mode == App.MODE_DROPBOX && editorUi.dropbox != null) {
-      // NOTE: Dropbox has a logout option in the picker
-      addLogout(function () {
-        editorUi.dropbox.logout();
-        editorUi.openLink('https://www.dropbox.com/logout');
-      });
-    }
 
     mxUtils.br(buttons);
     // var link = document.createElement('a');

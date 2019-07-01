@@ -5,7 +5,7 @@
  * Constructs a new graph editor
  */
 import { Editor } from './Editor'
-import { ColorDialog } from './Dialogs'
+import { ColorDialog, FilenameDialog } from './Dialogs'
 
 export function Menus (editorUi) {
   this.editorUi = editorUi;

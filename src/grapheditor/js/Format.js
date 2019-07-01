@@ -6,6 +6,7 @@ import { Editor, Dialog, PageSetupDialog } from './Editor'
 import { ChangePageSetup } from './EditorUi'
 import { Graph } from './Graph'
 import { Menus } from './Menus'
+import { FilenameDialog } from './Dialogs'
 export function Format (editorUi, container) {
   this.editorUi = editorUi;
   this.container = container;
