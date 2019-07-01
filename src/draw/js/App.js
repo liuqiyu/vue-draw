@@ -435,6 +435,7 @@ App.main = function (callback, container) {
     // Main
     let ui = new App(new Editor(false,
       null, null, null, urlParams['chrome'] != '0'), container);
+    console.log(ui);
     if (callback != null) {
       callback(ui);
     }

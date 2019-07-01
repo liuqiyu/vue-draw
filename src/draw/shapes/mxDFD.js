@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxDFD.js,v 1.5 2018/26/11 12:32:06 mate Exp $
  * Copyright (c) 2006-2018, JGraph Ltd

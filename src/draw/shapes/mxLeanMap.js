@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxLeanMap.js,v 1.3 2013/05/30 14:19:14 mate Exp $
  * Copyright (c) 2006-2013, JGraph Ltd

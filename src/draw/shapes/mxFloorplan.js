@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxFloorplan.js,v 1.3 2014/02/17 17:05:39 mate Exp $
  * Copyright (c) 2006-2014, JGraph Ltd

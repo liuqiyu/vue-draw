@@ -5,6 +5,7 @@
 // see https://code.google.com/p/google-caja/issues/detail?can=2&q=&colspec=ID%20Type%20Status%20Priority%20Owner%20Summary&groupby=&sort=&id=1296
 
 import '../sanitizer/sanitizer.min.js'
+import axios from 'axios'
 if (typeof html4 !== 'undefined') {
   html4.ATTRIBS["a::target"] = 0;
   html4.ATTRIBS["source::src"] = 0;
@@ -3922,11 +3923,12 @@ mxStencilRegistry.getStencil = function (name) {
             else if (fname.toLowerCase().substring(fname.length - 3, fname.length) == '.js') {
               try {
                 if (mxStencilRegistry.allowEval) {
-                  var req = mxUtils.load(fname);
-
-                  if (req != null && req.getStatus() >= 200 && req.getStatus() <= 299) {
-                    eval.call(window, req.getText());
-                  }
+                  // 将shapes放到public中才可以mxUtils.load，但不好解决Graph的依赖
+                  // var req = mxUtils.load(fname);
+                  // if (req != null && req.getStatus() >= 200 && req.getStatus() <= 299) {
+                  //   eval.call(window, req.getText());
+                  // }
+                  eval.call(window, require('@/draw/' + fname))
                 }
               }
               catch (e) {

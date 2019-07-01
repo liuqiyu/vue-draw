@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxSysML.js,v 1.0 2014/07/23 07:05:39 mate Exp $
  * Copyright (c) 2006-2014, JGraph Ltd

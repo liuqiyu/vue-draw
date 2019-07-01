@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxArchiMate3.js,v 1.0 2016/08/18 07:05:39 mate Exp $
  * Copyright (c) 2006-2016, JGraph Ltd

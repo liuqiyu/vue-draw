@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxArrows.js,v 1.5 2016/03/23 12:32:06 mate Exp $
  * Copyright (c) 2006-2016, JGraph Ltd

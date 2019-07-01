@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxAws4.js,v 1.0 2018/16/11 07:05:39 mate Exp $
  * Copyright (c) 2006-2018, JGraph Ltd

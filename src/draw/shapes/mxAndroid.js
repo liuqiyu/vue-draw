@@ -1,3 +1,5 @@
+import '@/grapheditor/js/Shapes';
+import { Graph } from '@/grapheditor/js/Graph';
 /**
  * $Id: mxAndroid.js,v 1.5 2014/01/21 12:32:06 mate Exp $
  * Copyright (c) 2006-2013, JGraph Ltd
