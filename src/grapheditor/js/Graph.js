@@ -4044,6 +4044,7 @@ mxStencilRegistry.parseStencilSets = function (stencils) {
 
 // Parses the given stencil set
 mxStencilRegistry.parseStencilSet = function (root, postStencilLoad, install) {
+  debugger
   if (root.nodeName == 'stencils') {
     var shapes = root.firstChild;
 

@@ -1134,7 +1134,6 @@ import { mxSettings } from '../Settings'
     Sidebar.prototype.addStencilPalette = function (id, title, stencilFile, style, ignore, onInit, scale, tags) {
       sidebarAddStencilPalette.apply(this, arguments);
       scale = (scale != null) ? scale : 1;
-
       // Used for creating index
       mxStencilRegistry.loadStencilSet(stencilFile, mxUtils.bind(this, function (packageName, stencilName, displayName, w, h) {
         if (ignore == null || mxUtils.indexOf(ignore, stencilName) < 0) {

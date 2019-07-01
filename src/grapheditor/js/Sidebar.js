@@ -3118,7 +3118,6 @@ Sidebar.prototype.getTagsForStencil = function (packageName, stencilName, moreTa
  */
 Sidebar.prototype.addStencilPalette = function (id, title, stencilFile, style, ignore, onInit, scale, tags, customFns) {
   scale = (scale != null) ? scale : 1;
-
   if (this.addStencilsToIndex) {
     // LATER: Handle asynchronous loading dependency
     var fns = [];
